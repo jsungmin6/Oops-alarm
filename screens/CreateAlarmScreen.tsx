@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
-import { v4 as uuidv4 } from 'uuid'  // uuid 패키지 필요
 import { RootStackParamList } from '../types/navigation'
 
 export default function CreateAlarmScreen() {
@@ -15,11 +14,14 @@ export default function CreateAlarmScreen() {
     const [name, setName] = useState('')
     const [interval, setInterval] = useState('')
 
+    const createId = () =>
+        Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+
     const handleSubmit = async () => {
         if (!name || !interval) return
 
         const newAlarm: Alarm = {
-            id: uuidv4(),
+            id: createId(),
             name,
             interval: parseInt(interval),
             createdAt: new Date().toISOString(),
