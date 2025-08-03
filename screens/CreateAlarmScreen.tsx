@@ -2,12 +2,16 @@
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native'
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { v4 as uuidv4 } from 'uuid'  // uuid 패키지 필요
+import { RootStackParamList } from '../types/navigation'
 
 export default function CreateAlarmScreen() {
-    const navigation = useNavigation()
+    const navigation = useNavigation<
+        NativeStackNavigationProp<RootStackParamList, 'CreateAlarm'>
+    >()
     const [name, setName] = useState('')
     const [interval, setInterval] = useState('')
 
