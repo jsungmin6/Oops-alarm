@@ -4,7 +4,14 @@ import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
-import { v4 as uuidv4 } from 'uuid'  // uuid 패키지 필요
+
+// 간단한 UUID v4 생성 함수 (Math.random 기반)
+const uuidv4 = () =>
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = (Math.random() * 16) | 0
+        const v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+    })
 
 export default function CreateAlarmScreen() {
     const navigation = useNavigation()
