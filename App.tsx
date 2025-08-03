@@ -1,11 +1,12 @@
 import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
 import CreateAlarmScreen from './screens/CreateAlarmScreen'
 import EditAlarmScreen from './screens/EditAlarmScreen'
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (

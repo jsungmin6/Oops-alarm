@@ -1,13 +1,17 @@
 import { View, Text, Button } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
 import * as Progress from 'react-native-progress'
+import { RootStackParamList } from '../types/navigation'
 
 export default function HomeScreen() {
-    const navigation = useNavigation()
+    const navigation = useNavigation<
+        NativeStackNavigationProp<RootStackParamList, 'Home'>
+    >()
     const [alarms, setAlarms] = useState<Alarm[]>([])
 
     useFocusEffect(
@@ -17,7 +21,7 @@ export default function HomeScreen() {
                 const saved: Alarm[] = json ? JSON.parse(json) : []
                 setAlarms(saved)
             }
-            loadAlarms()
+            void loadAlarms()
         }, [])
     )
 
@@ -103,9 +107,9 @@ export default function HomeScreen() {
                             <Button
                                 title="✏️ 수정"
                                 onPress={() =>
-                                    navigation.navigate('EditAlarm' as never, {
+                                    navigation.navigate('EditAlarm', {
                                         id: alarm.id,
-                                    } as never)
+                                    })
                                 }
                             />
                             <Button
@@ -125,7 +129,7 @@ export default function HomeScreen() {
             <View style={{ marginTop: 24 }}>
                 <Button
                     title="➕ 알람 등록"
-                    onPress={() => navigation.navigate('CreateAlarm' as never)}
+                    onPress={() => navigation.navigate('CreateAlarm')}
                 />
             </View>
         </View>

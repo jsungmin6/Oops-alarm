@@ -1,13 +1,17 @@
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native'
 import { useState, useEffect } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
+import { RootStackParamList } from '../types/navigation'
 
 export default function EditAlarmScreen() {
-    const navigation = useNavigation()
-    const route = useRoute()
-    const { id } = route.params as { id: string }
+    const navigation = useNavigation<
+        NativeStackNavigationProp<RootStackParamList, 'EditAlarm'>
+    >()
+    const route = useRoute<RouteProp<RootStackParamList, 'EditAlarm'>>()
+    const { id } = route.params
 
     const [startDate, setStartDate] = useState('')
     const [interval, setInterval] = useState('')
@@ -24,7 +28,7 @@ export default function EditAlarmScreen() {
                 setInterval(String(target.interval))
             }
         }
-        load()
+        void load()
     }, [id])
 
     const handleSave = async () => {
