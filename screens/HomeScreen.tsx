@@ -1,4 +1,4 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
 import * as Progress from 'react-native-progress'
 import { RootStackParamList } from '../types/navigation'
+import { Swipeable } from 'react-native-gesture-handler'
 
 export default function HomeScreen() {
     const navigation = useNavigation<
@@ -71,75 +72,86 @@ export default function HomeScreen() {
                 )
 
                 return (
-                    <View
+                    <Swipeable
                         key={alarm.id}
-                        style={{
-                            marginVertical: 16,
-                            paddingBottom: 12,
-                            borderBottomWidth: 1,
-                            borderColor: '#ccc',
-                        }}
+                        renderRightActions={() => (
+                            <Pressable
+                                onPress={() => deleteAlarm(alarm.id)}
+                                style={{
+                                    backgroundColor: '#d32f2f',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 64,
+                                }}
+                            >
+                                <Text style={{ fontSize: 24 }}>🗑️</Text>
+                            </Pressable>
+                        )}
                     >
-                        {/* 상단: 제목과 버튼 */}
                         <View
                             style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
+                                marginVertical: 16,
+                                paddingBottom: 12,
+                                borderBottomWidth: 1,
+                                borderColor: '#ccc',
                             }}
                         >
-                            <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                            {/* 상단: 제목과 버튼 */}
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    gap: 8,
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <Button
-                                    title="🔁 갱신"
-                                    onPress={() => updateAlarmDate(alarm.id)}
-                                />
-                                <Button
-                                    title="✏️ 수정"
-                                    onPress={() =>
-                                        navigation.navigate('EditAlarm', {
-                                            id: alarm.id,
-                                        })
-                                    }
-                                />
-                                <Button
-                                    title="🗑 삭제"
-                                    color="#d32f2f"
-                                    onPress={() => deleteAlarm(alarm.id)}
-                                />
+                                <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        gap: 8,
+                                    }}
+                                >
+                                    <Button
+                                        title="🔁 갱신"
+                                        onPress={() => updateAlarmDate(alarm.id)}
+                                    />
+                                    <Button
+                                        title="✏️ 수정"
+                                        onPress={() =>
+                                            navigation.navigate('EditAlarm', {
+                                                id: alarm.id,
+                                            })
+                                        }
+                                    />
+                                </View>
+                            </View>
+
+                            {/* 프로그레스바 */}
+                            <Progress.Bar
+                                progress={progress}
+                                width={null}
+                                height={10}
+                                borderRadius={5}
+                                color="#4caf50"
+                                unfilledColor="#e0e0e0"
+                                style={{ marginTop: 8 }}
+                            />
+
+                            {/* 하단: 시작일과 남은 일수 */}
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    marginTop: 8,
+                                }}
+                            >
+                                <Text>
+                                    시작일: {new Date(alarm.createdAt).toLocaleDateString()}
+                                </Text>
+                                <Text>남은 일수: {remainingDays}일</Text>
                             </View>
                         </View>
-
-                        {/* 프로그레스바 */}
-                        <Progress.Bar
-                            progress={progress}
-                            width={null}
-                            height={10}
-                            borderRadius={5}
-                            color="#4caf50"
-                            unfilledColor="#e0e0e0"
-                            style={{ marginTop: 8 }}
-                        />
-
-                        {/* 하단: 시작일과 남은 일수 */}
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginTop: 8,
-                            }}
-                        >
-                            <Text>
-                                시작일: {new Date(alarm.createdAt).toLocaleDateString()}
-                            </Text>
-                            <Text>남은 일수: {remainingDays}일</Text>
-                        </View>
-                    </View>
+                    </Swipeable>
                 )
             })}
 
