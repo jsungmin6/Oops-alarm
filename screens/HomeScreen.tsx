@@ -41,7 +41,7 @@ export default function HomeScreen() {
         const diffDays = Math.floor(
             (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
         )
-        return Math.min(diffDays / interval, 1)
+        return Math.min(Math.max(diffDays, 0) / interval, 1)
     }
 
     const deleteAlarm = async (id: string) => {
@@ -91,7 +91,7 @@ export default function HomeScreen() {
                             style={{ marginTop: 8 }}
                         />
 
-                        {/* 버튼 2개 나란히 */}
+                        {/* 버튼 3개 나란히 */}
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -100,6 +100,14 @@ export default function HomeScreen() {
                                 marginTop: 8,
                             }}
                         >
+                            <Button
+                                title="✏️ 수정"
+                                onPress={() =>
+                                    navigation.navigate('EditAlarm' as never, {
+                                        id: alarm.id,
+                                    } as never)
+                                }
+                            />
                             <Button
                                 title="🔁 갱신"
                                 onPress={() => updateAlarmDate(alarm.id)}
