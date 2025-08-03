@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import HomeScreen from './screens/HomeScreen'
 import CreateAlarmScreen from './screens/CreateAlarmScreen'
+import EditAlarmScreen from './screens/EditAlarmScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -12,6 +13,7 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="CreateAlarm" component={CreateAlarmScreen} />
+          <Stack.Screen name="EditAlarm" component={EditAlarmScreen} />
         </Stack.Navigator>
       </NavigationContainer>
   );
