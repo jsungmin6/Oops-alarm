@@ -44,6 +44,17 @@ export default function HomeScreen() {
         return Math.min(diffDays / interval, 1)
     }
 
+    const deleteAlarm = async (id: string) => {
+        const json = await AsyncStorage.getItem('alarms')
+        const alarms: Alarm[] = json ? JSON.parse(json) : []
+
+        const filtered = alarms.filter((alarm) => alarm.id !== id)
+
+        await AsyncStorage.setItem('alarms', JSON.stringify(filtered))
+        setAlarms(filtered)
+    }
+
+
     return (
         <View style={{ flex: 1, padding: 24 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
@@ -64,7 +75,10 @@ export default function HomeScreen() {
                         <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
                         <Text>주기: {alarm.interval}일</Text>
                         <Text>시작일: {new Date(alarm.createdAt).toLocaleDateString()}</Text>
-                        <Text>남은 일수: {Math.max(0, alarm.interval - Math.floor(progress * alarm.interval))}일</Text>
+                        <Text>
+                            남은 일수:{' '}
+                            {Math.max(0, alarm.interval - Math.floor(progress * alarm.interval))}일
+                        </Text>
 
                         {/* 프로그레스바 */}
                         <Progress.Bar
@@ -77,10 +91,23 @@ export default function HomeScreen() {
                             style={{ marginTop: 8 }}
                         />
 
-                        <View style={{ marginTop: 8 }}>
+                        {/* 버튼 2개 나란히 */}
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                gap: 8,
+                                marginTop: 8,
+                            }}
+                        >
                             <Button
                                 title="🔁 갱신"
                                 onPress={() => updateAlarmDate(alarm.id)}
+                            />
+                            <Button
+                                title="🗑 삭제"
+                                color="#d32f2f"
+                                onPress={() => deleteAlarm(alarm.id)}
                             />
                         </View>
                     </View>
