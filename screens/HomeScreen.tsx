@@ -1,4 +1,5 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, TouchableOpacity } from 'react-native'
+import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -71,8 +72,23 @@ export default function HomeScreen() {
                 )
 
                 return (
-                    <View
+                    <Swipeable
                         key={alarm.id}
+                        renderRightActions={() => (
+                            <TouchableOpacity
+                                onPress={() => deleteAlarm(alarm.id)}
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 64,
+                                    backgroundColor: '#f5f5f5',
+                                }}
+                            >
+                                <Text style={{ fontSize: 24 }}>🗑️</Text>
+                            </TouchableOpacity>
+                        )}
+                    >
+                    <View
                         style={{
                             marginVertical: 16,
                             paddingBottom: 12,
@@ -107,11 +123,6 @@ export default function HomeScreen() {
                                         })
                                     }
                                 />
-                                <Button
-                                    title="🗑 삭제"
-                                    color="#d32f2f"
-                                    onPress={() => deleteAlarm(alarm.id)}
-                                />
                             </View>
                         </View>
 
@@ -140,6 +151,7 @@ export default function HomeScreen() {
                             <Text>남은 일수: {remainingDays}일</Text>
                         </View>
                     </View>
+                    </Swipeable>
                 )
             })}
 
