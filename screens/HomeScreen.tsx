@@ -65,6 +65,10 @@ export default function HomeScreen() {
 
             {alarms.map((alarm) => {
                 const progress = calculateProgress(alarm.createdAt, alarm.interval)
+                const remainingDays = Math.max(
+                    0,
+                    alarm.interval - Math.floor(progress * alarm.interval)
+                )
 
                 return (
                     <View
@@ -76,13 +80,40 @@ export default function HomeScreen() {
                             borderColor: '#ccc',
                         }}
                     >
-                        <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
-                        <Text>주기: {alarm.interval}일</Text>
-                        <Text>시작일: {new Date(alarm.createdAt).toLocaleDateString()}</Text>
-                        <Text>
-                            남은 일수:{' '}
-                            {Math.max(0, alarm.interval - Math.floor(progress * alarm.interval))}일
-                        </Text>
+                        {/* 상단: 제목과 버튼 */}
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    gap: 8,
+                                }}
+                            >
+                                <Button
+                                    title="🔁 갱신"
+                                    onPress={() => updateAlarmDate(alarm.id)}
+                                />
+                                <Button
+                                    title="✏️ 수정"
+                                    onPress={() =>
+                                        navigation.navigate('EditAlarm', {
+                                            id: alarm.id,
+                                        })
+                                    }
+                                />
+                                <Button
+                                    title="🗑 삭제"
+                                    color="#d32f2f"
+                                    onPress={() => deleteAlarm(alarm.id)}
+                                />
+                            </View>
+                        </View>
 
                         {/* 프로그레스바 */}
                         <Progress.Bar
@@ -95,32 +126,18 @@ export default function HomeScreen() {
                             style={{ marginTop: 8 }}
                         />
 
-                        {/* 버튼 3개 나란히 */}
+                        {/* 하단: 시작일과 남은 일수 */}
                         <View
                             style={{
                                 flexDirection: 'row',
-                                justifyContent: 'flex-start',
-                                gap: 8,
+                                justifyContent: 'space-between',
                                 marginTop: 8,
                             }}
                         >
-                            <Button
-                                title="✏️ 수정"
-                                onPress={() =>
-                                    navigation.navigate('EditAlarm', {
-                                        id: alarm.id,
-                                    })
-                                }
-                            />
-                            <Button
-                                title="🔁 갱신"
-                                onPress={() => updateAlarmDate(alarm.id)}
-                            />
-                            <Button
-                                title="🗑 삭제"
-                                color="#d32f2f"
-                                onPress={() => deleteAlarm(alarm.id)}
-                            />
+                            <Text>
+                                시작일: {new Date(alarm.createdAt).toLocaleDateString()}
+                            </Text>
+                            <Text>남은 일수: {remainingDays}일</Text>
                         </View>
                     </View>
                 )
