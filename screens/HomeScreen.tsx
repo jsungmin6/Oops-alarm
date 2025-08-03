@@ -1,10 +1,10 @@
-// screens/HomeScreen.tsx
 import { View, Text, Button } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
+import * as Progress from 'react-native-progress'
 
 export default function HomeScreen() {
     const navigation = useNavigation()
@@ -21,7 +21,6 @@ export default function HomeScreen() {
         }, [])
     )
 
-    // 🔁 알람 갱신 함수
     const updateAlarmDate = async (id: string) => {
         const json = await AsyncStorage.getItem('alarms')
         const alarms: Alarm[] = json ? JSON.parse(json) : []
@@ -36,32 +35,57 @@ export default function HomeScreen() {
         setAlarms(updated)
     }
 
+    const calculateProgress = (createdAt: string, interval: number): number => {
+        const start = new Date(createdAt)
+        const now = new Date()
+        const diffDays = Math.floor(
+            (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+        )
+        return Math.min(diffDays / interval, 1)
+    }
+
     return (
         <View style={{ flex: 1, padding: 24 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
 
-            {alarms.map((alarm) => (
-                <View
-                    key={alarm.id}
-                    style={{
-                        marginVertical: 12,
-                        paddingBottom: 8,
-                        borderBottomWidth: 1,
-                        borderColor: '#ccc',
-                    }}
-                >
-                    <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
-                    <Text>주기: {alarm.interval}일</Text>
-                    <Text>시작일: {new Date(alarm.createdAt).toLocaleDateString()}</Text>
+            {alarms.map((alarm) => {
+                const progress = calculateProgress(alarm.createdAt, alarm.interval)
 
-                    <View style={{ marginTop: 6 }}>
-                        <Button
-                            title="🔁 갱신"
-                            onPress={() => updateAlarmDate(alarm.id)}
+                return (
+                    <View
+                        key={alarm.id}
+                        style={{
+                            marginVertical: 16,
+                            paddingBottom: 12,
+                            borderBottomWidth: 1,
+                            borderColor: '#ccc',
+                        }}
+                    >
+                        <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                        <Text>주기: {alarm.interval}일</Text>
+                        <Text>시작일: {new Date(alarm.createdAt).toLocaleDateString()}</Text>
+                        <Text>남은 일수: {Math.max(0, alarm.interval - Math.floor(progress * alarm.interval))}일</Text>
+
+                        {/* 프로그레스바 */}
+                        <Progress.Bar
+                            progress={progress}
+                            width={null}
+                            height={10}
+                            borderRadius={5}
+                            color="#4caf50"
+                            unfilledColor="#e0e0e0"
+                            style={{ marginTop: 8 }}
                         />
+
+                        <View style={{ marginTop: 8 }}>
+                            <Button
+                                title="🔁 갱신"
+                                onPress={() => updateAlarmDate(alarm.id)}
+                            />
+                        </View>
                     </View>
-                </View>
-            ))}
+                )
+            })}
 
             <View style={{ marginTop: 24 }}>
                 <Button
