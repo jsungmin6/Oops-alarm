@@ -61,8 +61,10 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24 }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
+        <View style={{ flex: 1, padding: 24, backgroundColor: '#e8f5e9' }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#2e7d32' }}>
+                🕒 내 알람
+            </Text>
 
             {alarms.map((alarm) => {
                 const progress = calculateProgress(alarm.createdAt, alarm.interval)
@@ -81,19 +83,21 @@ export default function HomeScreen() {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     width: 64,
-                                    backgroundColor: '#f5f5f5',
+                                    backgroundColor: '#a8e6cf',
                                 }}
                             >
-                                <Text style={{ fontSize: 24 }}>🗑️</Text>
+                                <Text style={{ fontSize: 28 }}>🗑️</Text>
                             </TouchableOpacity>
                         )}
                     >
                     <View
                         style={{
                             marginVertical: 16,
-                            paddingBottom: 12,
-                            borderBottomWidth: 1,
-                            borderColor: '#ccc',
+                            padding: 16,
+                            backgroundColor: '#ffffff',
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            borderColor: '#a8e6cf',
                         }}
                     >
                         {/* 상단: 제목과 버튼 */}
@@ -104,25 +108,36 @@ export default function HomeScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                            <Text
+                                style={{ fontSize: 20, fontWeight: 'bold', color: '#2e7d32' }}
+                            >
+                                {alarm.name}
+                            </Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    gap: 8,
+                                    gap: 12,
                                 }}
                             >
-                                <Button
-                                    title="🔁 갱신"
+                                <TouchableOpacity
                                     onPress={() => updateAlarmDate(alarm.id)}
-                                />
-                                <Button
-                                    title="✏️ 수정"
+                                >
+                                    <Text style={{ fontSize: 20 }}>🔁</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
                                     onPress={() =>
                                         navigation.navigate('EditAlarm', {
                                             id: alarm.id,
                                         })
                                     }
-                                />
+                                >
+                                    <Text style={{ fontSize: 20 }}>✏️</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => deleteAlarm(alarm.id)}
+                                >
+                                    <Text style={{ fontSize: 20 }}>🗑️</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -130,11 +145,11 @@ export default function HomeScreen() {
                         <Progress.Bar
                             progress={progress}
                             width={null}
-                            height={10}
-                            borderRadius={5}
+                            height={14}
+                            borderRadius={7}
                             color="#4caf50"
-                            unfilledColor="#e0e0e0"
-                            style={{ marginTop: 8 }}
+                            unfilledColor="#e0f2f1"
+                            style={{ marginTop: 12 }}
                         />
 
                         {/* 하단: 시작일과 남은 일수 */}
@@ -145,10 +160,12 @@ export default function HomeScreen() {
                                 marginTop: 8,
                             }}
                         >
-                            <Text>
+                            <Text style={{ fontSize: 12, color: '#888' }}>
                                 시작일: {new Date(alarm.createdAt).toLocaleDateString()}
                             </Text>
-                            <Text>남은 일수: {remainingDays}일</Text>
+                            <Text style={{ fontSize: 12, color: '#888' }}>
+                                남은 일수: {remainingDays}일
+                            </Text>
                         </View>
                     </View>
                     </Swipeable>
