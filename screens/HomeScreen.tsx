@@ -65,7 +65,7 @@ export default function HomeScreen() {
                 alarms={alarms}
                 deleteAlarm={deleteAlarm}
                 updateAlarmDate={updateAlarmDate}
-                onEdit={(id) => navigation.navigate('EditAlarm', { id })}
+                onEdit={(alarm) => navigation.navigate('EditAlarm', { id: alarm.id })}
             />
 
             <View style={{ marginTop: 24, marginHorizontal: 24 }}>

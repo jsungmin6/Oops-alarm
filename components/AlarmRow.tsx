@@ -14,7 +14,7 @@ type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (id: string) => void
+    onEdit: (alarm: Alarm) => void
 }
 
 const calculateProgress = (createdAt: string, interval: number) => {
@@ -35,13 +35,17 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         alarm.interval
     )
 
+    const EDIT_WIDTH = 72
+    const DELETE_WIDTH = 88
+    const TOTAL_WIDTH = EDIT_WIDTH + DELETE_WIDTH
+
     const renderRightActions = (
         progress: Animated.AnimatedInterpolation<number>,
         dragX: Animated.AnimatedInterpolation<number>
     ) => {
         const translateX = dragX.interpolate({
-            inputRange: [-88, 0],
-            outputRange: [0, 88],
+            inputRange: [-TOTAL_WIDTH, 0],
+            outputRange: [0, TOTAL_WIDTH],
             extrapolate: 'clamp',
         })
         const opacity = progress.interpolate({
@@ -52,16 +56,26 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         return (
             <Animated.View
                 style={[
-                    styles.deleteAction,
+                    styles.actionsContainer,
                     { transform: [{ translateX }], opacity },
                 ]}
             >
-                <TouchableOpacity
-                    onPress={() => deleteAlarm(alarm.id)}
-                    style={styles.deleteButton}
-                >
-                    <Text style={styles.deleteText}>삭제</Text>
-                </TouchableOpacity>
+                <View style={[styles.editAction, { width: EDIT_WIDTH }]}>
+                    <TouchableOpacity
+                        onPress={() => onEdit(alarm)}
+                        style={styles.actionButton}
+                    >
+                        <Text style={styles.editText}>수정</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={[styles.deleteAction, { width: DELETE_WIDTH }]}>
+                    <TouchableOpacity
+                        onPress={() => deleteAlarm(alarm.id)}
+                        style={styles.actionButton}
+                    >
+                        <Text style={styles.deleteText}>삭제</Text>
+                    </TouchableOpacity>
+                </View>
             </Animated.View>
         )
     }
@@ -71,14 +85,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
             <Swipeable
                 renderRightActions={renderRightActions}
                 overshootRight={false}
+                friction={3}
+                rightThreshold={40}
             >
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Text style={styles.title}>{alarm.name}</Text>
                         <View style={styles.actions}>
-                            <TouchableOpacity onPress={() => onEdit(alarm.id)}>
-                                <Text style={styles.actionText}>수정</Text>
-                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
                             >
@@ -112,11 +125,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 const styles = StyleSheet.create({
     wrapper: {
         marginVertical: 8,
+        borderRadius: 16,
         overflow: 'hidden',
     },
     container: {
         backgroundColor: '#fff',
         padding: 16,
+        borderRadius: 16,
     },
     header: {
         flexDirection: 'row',
@@ -146,17 +161,31 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#888',
     },
+    actionsContainer: {
+        height: '100%',
+        flexDirection: 'row',
+    },
+    editAction: {
+        height: '100%',
+        backgroundColor: '#FFF3E0',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     deleteAction: {
-        width: 88,
         height: '100%',
         backgroundColor: '#E6F4EA',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    deleteButton: {
+    actionButton: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    editText: {
+        color: '#FF9800',
+        fontWeight: '600',
+        fontSize: 16,
     },
     deleteText: {
         color: '#2E7D32',
