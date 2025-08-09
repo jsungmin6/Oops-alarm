@@ -39,7 +39,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const TOTAL_WIDTH = ACTION_WIDTH * 2
 
     const renderRightActions = (
-        swipeProgress: Animated.AnimatedInterpolation<number>,
+        _progress: Animated.AnimatedInterpolation<number>,
         dragX: Animated.AnimatedInterpolation<number>
     ) => {
         const translateX = dragX.interpolate({
@@ -48,8 +48,14 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
             extrapolate: 'clamp',
         })
 
-        const actionWidth = swipeProgress.interpolate({
-            inputRange: [0, 1],
+        const reveal = dragX.interpolate({
+            inputRange: [-TOTAL_WIDTH, 0],
+            outputRange: [TOTAL_WIDTH, 0],
+            extrapolate: 'clamp',
+        })
+
+        const actionWidth = reveal.interpolate({
+            inputRange: [0, TOTAL_WIDTH],
             outputRange: [0, ACTION_WIDTH],
             extrapolate: 'clamp',
         })
@@ -154,7 +160,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
         padding: 16,
-        borderRadius: 16,
     },
     header: {
         flexDirection: 'row',
