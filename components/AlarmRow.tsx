@@ -117,8 +117,9 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         <View style={styles.actions}>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
+                                style={styles.refreshButton}
                             >
-                                <Text style={styles.actionText}>갱신</Text>
+                                <Text style={styles.refreshButtonText}>갱신</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -155,6 +156,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 16,
         borderRadius: 16,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#e0e0e0',
     },
     header: {
         flexDirection: 'row',
@@ -168,9 +171,16 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row',
     },
-    actionText: {
-        fontSize: 16,
-        marginLeft: 12,
+    refreshButton: {
+        backgroundColor: '#4caf50',
+        paddingVertical: 4,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+    },
+    refreshButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '500',
     },
     progress: {
         marginTop: 12,
