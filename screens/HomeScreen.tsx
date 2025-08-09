@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -51,7 +52,9 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
+        <SafeAreaView
+            style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}
+        >
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
 
             <AlarmList
@@ -74,6 +77,6 @@ export default function HomeScreen() {
                     <Text style={{ color: 'white', fontWeight: 'bold' }}>➕ 알람 등록</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     )
 }

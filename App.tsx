@@ -11,10 +11,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="CreateAlarm" component={CreateAlarmScreen} />
             <Stack.Screen name="EditAlarm" component={EditAlarmScreen} />
           </Stack.Navigator>
