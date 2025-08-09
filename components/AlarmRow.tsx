@@ -35,12 +35,11 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         alarm.interval
     )
 
-    const EDIT_WIDTH = 72
-    const DELETE_WIDTH = 88
-    const TOTAL_WIDTH = EDIT_WIDTH + DELETE_WIDTH
+    const ACTION_WIDTH = 80
+    const TOTAL_WIDTH = ACTION_WIDTH * 2
 
     const renderRightActions = (
-        progress: Animated.AnimatedInterpolation<number>,
+        swipeProgress: Animated.AnimatedInterpolation<number>,
         dragX: Animated.AnimatedInterpolation<number>
     ) => {
         const translateX = dragX.interpolate({
@@ -48,34 +47,57 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
             outputRange: [0, TOTAL_WIDTH],
             extrapolate: 'clamp',
         })
-        const opacity = progress.interpolate({
+
+        const actionWidth = swipeProgress.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, 1],
+            outputRange: [0, ACTION_WIDTH],
+            extrapolate: 'clamp',
         })
 
         return (
             <Animated.View
                 style={[
                     styles.actionsContainer,
-                    { transform: [{ translateX }], opacity },
+                    {
+                        width: TOTAL_WIDTH,
+                        transform: [{ translateX }],
+                    },
                 ]}
             >
-                <View style={[styles.editAction, { width: EDIT_WIDTH }]}>
+                <Animated.View
+                    style={[
+                        styles.action,
+                        styles.editAction,
+                        {
+                            width: actionWidth,
+                            right: actionWidth,
+                        },
+                    ]}
+                >
                     <TouchableOpacity
                         onPress={() => onEdit(alarm)}
                         style={styles.actionButton}
                     >
-                        <Text style={styles.editText}>수정</Text>
+                        <Text style={styles.actionLabel}>수정</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={[styles.deleteAction, { width: DELETE_WIDTH }]}>
+                </Animated.View>
+                <Animated.View
+                    style={[
+                        styles.action,
+                        styles.deleteAction,
+                        {
+                            width: actionWidth,
+                            right: 0,
+                        },
+                    ]}
+                >
                     <TouchableOpacity
                         onPress={() => deleteAlarm(alarm.id)}
                         style={styles.actionButton}
                     >
-                        <Text style={styles.deleteText}>삭제</Text>
+                        <Text style={styles.actionLabel}>삭제</Text>
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
             </Animated.View>
         )
     }
@@ -163,32 +185,28 @@ const styles = StyleSheet.create({
     },
     actionsContainer: {
         height: '100%',
-        flexDirection: 'row',
+        overflow: 'hidden',
+    },
+    action: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     editAction: {
-        height: '100%',
-        backgroundColor: '#FFF3E0',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#81C784',
     },
     deleteAction: {
-        height: '100%',
-        backgroundColor: '#E6F4EA',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#388E3C',
     },
     actionButton: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    editText: {
-        color: '#FF9800',
-        fontWeight: '600',
-        fontSize: 16,
-    },
-    deleteText: {
-        color: '#2E7D32',
+    actionLabel: {
+        color: '#ffffff',
         fontWeight: '600',
         fontSize: 16,
     },
