@@ -70,7 +70,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         styles.editAction,
                         {
                             width: actionWidth,
-                            right: actionWidth,
+                            right: 0,
                         },
                     ]}
                 >
@@ -87,7 +87,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         styles.deleteAction,
                         {
                             width: actionWidth,
-                            right: 0,
+                            right: actionWidth,
                         },
                     ]}
                 >
