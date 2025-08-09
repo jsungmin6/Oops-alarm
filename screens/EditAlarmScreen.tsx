@@ -5,6 +5,8 @@ import {
     Button,
     StyleSheet,
     Pressable,
+    Modal,
+    Platform,
 } from 'react-native'
 import { useState, useEffect } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -80,8 +82,8 @@ export default function EditAlarmScreen() {
     }
 
     const onChangeDate = (_: any, selected?: Date) => {
-        setShowPicker(false)
         if (selected) setStartDate(selected)
+        setShowPicker(false)
     }
 
     return (
@@ -101,14 +103,21 @@ export default function EditAlarmScreen() {
             >
                 <Text>{startDate.toISOString().slice(0, 10)}</Text>
             </Pressable>
-            {showPicker && (
-                <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    display="default"
-                    onChange={onChangeDate}
-                />
-            )}
+            <Modal
+                visible={showPicker}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowPicker(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                        onChange={onChangeDate}
+                    />
+                </View>
+            </Modal>
 
             <Text style={styles.label}>주기 (일)</Text>
             <TextInput
@@ -146,5 +155,11 @@ const styles = StyleSheet.create({
     error: {
         color: 'red',
         marginTop: 4,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
 })

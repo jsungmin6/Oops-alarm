@@ -8,7 +8,7 @@ type Props = {
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
     onEdit: (alarm: Alarm) => void
-    footer?: React.ReactNode
+    footer?: React.ReactElement | null
 }
 
 const AlarmList = ({
@@ -31,7 +31,7 @@ const AlarmList = ({
         )}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={footer}
+        ListFooterComponent={footer ?? null}
     />
 )
 
