@@ -5,9 +5,13 @@ import {
     Button,
     StyleSheet,
     Pressable,
+    Platform,
+    Modal,
 } from 'react-native'
 import { useState, useEffect } from 'react'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker, {
+    DateTimePickerAndroid,
+} from '@react-native-community/datetimepicker'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -79,9 +83,23 @@ export default function EditAlarmScreen() {
         navigation.goBack()
     }
 
+    const openPicker = () => {
+        if (Platform.OS === 'android') {
+            DateTimePickerAndroid.open({
+                value: startDate,
+                mode: 'date',
+                onChange: (_, date) => {
+                    if (date) setStartDate(date)
+                },
+            })
+        } else {
+            setShowPicker(true)
+        }
+    }
+
     const onChangeDate = (_: any, selected?: Date) => {
-        setShowPicker(false)
         if (selected) setStartDate(selected)
+        setShowPicker(false)
     }
 
     return (
@@ -95,19 +113,19 @@ export default function EditAlarmScreen() {
             {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
 
             <Text style={styles.label}>시작일</Text>
-            <Pressable
-                onPress={() => setShowPicker(true)}
-                style={styles.input}
-            >
+            <Pressable onPress={openPicker} style={styles.input}>
                 <Text>{startDate.toISOString().slice(0, 10)}</Text>
             </Pressable>
-            {showPicker && (
-                <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    display="default"
-                    onChange={onChangeDate}
-                />
+            {Platform.OS !== 'android' && showPicker && (
+                <Modal transparent={true} animationType="slide">
+                    <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        display="spinner"
+                        onChange={onChangeDate}
+                        style={styles.modalPicker}
+                    />
+                </Modal>
             )}
 
             <Text style={styles.label}>주기 (일)</Text>
@@ -146,5 +164,8 @@ const styles = StyleSheet.create({
     error: {
         color: 'red',
         marginTop: 4,
+    },
+    modalPicker: {
+        backgroundColor: '#fff',
     },
 })
