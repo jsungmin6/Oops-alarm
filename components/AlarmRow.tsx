@@ -68,7 +68,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
     return (
         <View style={styles.wrapper}>
-            <Swipeable renderRightActions={renderRightActions}>
+            <Swipeable renderRightActions={renderRightActions} overshootRight={false}>
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Text style={styles.title}>{alarm.name}</Text>
