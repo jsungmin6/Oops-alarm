@@ -1,4 +1,15 @@
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native'
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    Pressable,
+    Platform,
+} from 'react-native'
+import DateTimePicker, {
+    DateTimePickerAndroid,
+} from '@react-native-community/datetimepicker'
 import { useState, useEffect } from 'react'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -13,9 +24,12 @@ export default function EditAlarmScreen() {
     const route = useRoute<RouteProp<RootStackParamList, 'EditAlarm'>>()
     const { id } = route.params
 
-    const [startDate, setStartDate] = useState('')
+    const [startDate, setStartDate] = useState(new Date())
     const [interval, setInterval] = useState('')
     const [name, setName] = useState('')
+    const [nameError, setNameError] = useState('')
+    const [intervalError, setIntervalError] = useState('')
+    const [showPicker, setShowPicker] = useState(false)
 
     useEffect(() => {
         const load = async () => {
@@ -24,22 +38,55 @@ export default function EditAlarmScreen() {
             const target = alarms.find((a) => a.id === id)
             if (target) {
                 setName(target.name)
-                setStartDate(new Date(target.createdAt).toISOString().slice(0, 10))
+                setStartDate(new Date(target.createdAt))
                 setInterval(String(target.interval))
             }
         }
         void load()
     }, [id])
 
+    const openDatePicker = () => {
+        if (Platform.OS === 'android') {
+            DateTimePickerAndroid.open({
+                value: startDate,
+                mode: 'date',
+                onChange: (_, selected) => {
+                    if (selected) setStartDate(selected)
+                },
+            })
+        } else {
+            setShowPicker(true)
+        }
+    }
+
     const handleSave = async () => {
+        let hasError = false
+        if (!name.trim()) {
+            setNameError('알람 이름을 입력해주세요.')
+            hasError = true
+        } else {
+            setNameError('')
+        }
+
+        const parsedInterval = parseInt(interval, 10)
+        if (!parsedInterval || parsedInterval < 1) {
+            setIntervalError('주기는 1 이상의 정수를 입력해야 합니다.')
+            hasError = true
+        } else {
+            setIntervalError('')
+        }
+
+        if (hasError) return
+
         const json = await AsyncStorage.getItem('alarms')
         const alarms: Alarm[] = json ? JSON.parse(json) : []
         const updated = alarms.map((alarm) =>
             alarm.id === id
                 ? {
                       ...alarm,
-                      interval: parseInt(interval),
-                      createdAt: new Date(startDate).toISOString(),
+                      name,
+                      interval: parsedInterval,
+                      createdAt: startDate.toISOString(),
                   }
                 : alarm
         )
@@ -50,15 +97,28 @@ export default function EditAlarmScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.label}>알람 이름</Text>
-            <Text style={styles.name}>{name}</Text>
-
-            <Text style={styles.label}>시작일 (YYYY-MM-DD)</Text>
             <TextInput
                 style={styles.input}
-                value={startDate}
-                onChangeText={setStartDate}
-                placeholder="2024-01-01"
+                value={name}
+                onChangeText={setName}
+                placeholder="예: 칫솔 교체"
             />
+            {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
+            <Text style={styles.label}>시작일</Text>
+            <Pressable style={styles.input} onPress={openDatePicker}>
+                <Text>{startDate.toISOString().slice(0, 10)}</Text>
+            </Pressable>
+            {showPicker && (
+                <DateTimePicker
+                    value={startDate}
+                    mode="date"
+                    display="default"
+                    onChange={(_, selected) => {
+                        setShowPicker(false)
+                        if (selected) setStartDate(selected)
+                    }}
+                />
+            )}
 
             <Text style={styles.label}>주기 (일)</Text>
             <TextInput
@@ -67,6 +127,9 @@ export default function EditAlarmScreen() {
                 onChangeText={setInterval}
                 keyboardType="numeric"
             />
+            {intervalError ? (
+                <Text style={styles.error}>{intervalError}</Text>
+            ) : null}
 
             <Button title="저장" onPress={handleSave} />
         </View>
@@ -90,8 +153,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginTop: 8,
     },
-    name: {
-        fontSize: 18,
-        marginTop: 8,
+    error: {
+        color: 'red',
+        marginTop: 4,
     },
 })
