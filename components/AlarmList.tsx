@@ -29,7 +29,8 @@ const AlarmList = ({ alarms, deleteAlarm, updateAlarmDate, onEdit }: Props) => (
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
+        paddingTop: 16,
+        paddingHorizontal: 0,
         paddingBottom: 80,
     },
 })
