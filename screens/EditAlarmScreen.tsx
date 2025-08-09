@@ -9,9 +9,7 @@ import {
     Modal,
 } from 'react-native'
 import { useState, useEffect } from 'react'
-import DateTimePicker, {
-    DateTimePickerAndroid,
-} from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -26,6 +24,7 @@ export default function EditAlarmScreen() {
     const { id } = route.params
 
     const [startDate, setStartDate] = useState(new Date())
+    const [tempDate, setTempDate] = useState(new Date())
     const [interval, setInterval] = useState('')
     const [name, setName] = useState('')
     const [showPicker, setShowPicker] = useState(false)
@@ -84,22 +83,12 @@ export default function EditAlarmScreen() {
     }
 
     const openPicker = () => {
-        if (Platform.OS === 'android') {
-            DateTimePickerAndroid.open({
-                value: startDate,
-                mode: 'date',
-                onChange: (_, date) => {
-                    if (date) setStartDate(date)
-                },
-            })
-        } else {
-            setShowPicker(true)
-        }
+        setTempDate(startDate)
+        setShowPicker(true)
     }
 
-    const onChangeDate = (_: any, selected?: Date) => {
-        if (selected) setStartDate(selected)
-        setShowPicker(false)
+    const onChangeTempDate = (_: any, selected?: Date) => {
+        if (selected) setTempDate(selected)
     }
 
     return (
@@ -116,15 +105,29 @@ export default function EditAlarmScreen() {
             <Pressable onPress={openPicker} style={styles.input}>
                 <Text>{startDate.toISOString().slice(0, 10)}</Text>
             </Pressable>
-            {Platform.OS !== 'android' && showPicker && (
-                <Modal transparent={true} animationType="slide">
-                    <DateTimePicker
-                        value={startDate}
-                        mode="date"
-                        display="spinner"
-                        onChange={onChangeDate}
-                        style={styles.modalPicker}
-                    />
+            {showPicker && (
+                <Modal transparent animationType="fade">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContent}>
+                            <DateTimePicker
+                                value={tempDate}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                                onChange={onChangeTempDate}
+                                style={styles.modalPicker}
+                            />
+                            <View style={styles.modalButtons}>
+                                <Button title="취소" onPress={() => setShowPicker(false)} />
+                                <Button
+                                    title="확인"
+                                    onPress={() => {
+                                        setStartDate(tempDate)
+                                        setShowPicker(false)
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    </View>
                 </Modal>
             )}
 
@@ -167,5 +170,23 @@ const styles = StyleSheet.create({
     },
     modalPicker: {
         backgroundColor: '#fff',
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginTop: 12,
     },
 })
