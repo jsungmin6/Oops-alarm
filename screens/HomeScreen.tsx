@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -61,7 +61,7 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24 }}>
+        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
 
             {alarms.map((alarm) => {
@@ -81,85 +81,103 @@ export default function HomeScreen() {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     width: 64,
-                                    backgroundColor: '#f5f5f5',
+                                    backgroundColor: '#a8e6cf',
                                 }}
                             >
                                 <Text style={{ fontSize: 24 }}>🗑️</Text>
                             </TouchableOpacity>
                         )}
                     >
-                    <View
-                        style={{
-                            marginVertical: 16,
-                            paddingBottom: 12,
-                            borderBottomWidth: 1,
-                            borderColor: '#ccc',
-                        }}
-                    >
-                        {/* 상단: 제목과 버튼 */}
                         <View
                             style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
+                                marginVertical: 12,
+                                padding: 16,
+                                backgroundColor: '#e8f5e9',
+                                borderRadius: 8,
                             }}
                         >
-                            <Text style={{ fontSize: 16 }}>{alarm.name}</Text>
+                            {/* 상단: 제목과 버튼 */}
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    gap: 8,
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <Button
-                                    title="🔁 갱신"
-                                    onPress={() => updateAlarmDate(alarm.id)}
-                                />
-                                <Button
-                                    title="✏️ 수정"
-                                    onPress={() =>
-                                        navigation.navigate('EditAlarm', {
-                                            id: alarm.id,
-                                        })
-                                    }
-                                />
+                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                                    {alarm.name}
+                                </Text>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        gap: 12,
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate('EditAlarm', {
+                                                id: alarm.id,
+                                            })
+                                        }
+                                    >
+                                        <Text style={{ fontSize: 20 }}>✏️</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => updateAlarmDate(alarm.id)}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>🔁</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => deleteAlarm(alarm.id)}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>🗑️</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            {/* 프로그레스바 */}
+                            <Progress.Bar
+                                progress={progress}
+                                width={null}
+                                height={14}
+                                borderRadius={7}
+                                color="#4caf50"
+                                unfilledColor="#e0f2f1"
+                                style={{ marginTop: 12 }}
+                            />
+
+                            {/* 하단: 시작일과 남은 일수 */}
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    marginTop: 8,
+                                }}
+                            >
+                                <Text style={{ fontSize: 12, color: '#888' }}>
+                                    시작일: {new Date(alarm.createdAt).toLocaleDateString()}
+                                </Text>
+                                <Text style={{ fontSize: 12, color: '#888' }}>
+                                    남은 일수: {remainingDays}일
+                                </Text>
                             </View>
                         </View>
-
-                        {/* 프로그레스바 */}
-                        <Progress.Bar
-                            progress={progress}
-                            width={null}
-                            height={10}
-                            borderRadius={5}
-                            color="#4caf50"
-                            unfilledColor="#e0e0e0"
-                            style={{ marginTop: 8 }}
-                        />
-
-                        {/* 하단: 시작일과 남은 일수 */}
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginTop: 8,
-                            }}
-                        >
-                            <Text>
-                                시작일: {new Date(alarm.createdAt).toLocaleDateString()}
-                            </Text>
-                            <Text>남은 일수: {remainingDays}일</Text>
-                        </View>
-                    </View>
                     </Swipeable>
                 )
             })}
 
             <View style={{ marginTop: 24 }}>
-                <Button
-                    title="➕ 알람 등록"
+                <TouchableOpacity
                     onPress={() => navigation.navigate('CreateAlarm')}
-                />
+                    style={{
+                        backgroundColor: '#4caf50',
+                        paddingVertical: 12,
+                        borderRadius: 8,
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>➕ 알람 등록</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
