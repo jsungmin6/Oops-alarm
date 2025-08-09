@@ -23,6 +23,7 @@ const AlarmList = ({ alarms, deleteAlarm, updateAlarmDate, onEdit }: Props) => (
             />
         )}
         contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
     />
 )
 

@@ -36,23 +36,31 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     )
 
     const renderRightActions = (
-        _progress: Animated.AnimatedInterpolation<number>,
+        progress: Animated.AnimatedInterpolation<number>,
         dragX: Animated.AnimatedInterpolation<number>
     ) => {
         const translateX = dragX.interpolate({
-            inputRange: [-100, 0],
-            outputRange: [0, 80],
+            inputRange: [-88, 0],
+            outputRange: [0, 88],
             extrapolate: 'clamp',
         })
+        const opacity = progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+        })
+
         return (
             <Animated.View
-                style={[styles.deleteAction, { transform: [{ translateX }] }]}
+                style={[
+                    styles.deleteAction,
+                    { transform: [{ translateX }], opacity },
+                ]}
             >
                 <TouchableOpacity
                     onPress={() => deleteAlarm(alarm.id)}
                     style={styles.deleteButton}
                 >
-                    <Text style={styles.deleteIcon}>🗑️</Text>
+                    <Text style={styles.deleteText}>삭제</Text>
                 </TouchableOpacity>
             </Animated.View>
         )
@@ -137,17 +145,21 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     deleteAction: {
-        width: 80,
+        width: 88,
         height: '100%',
-        backgroundColor: '#4caf50',
+        backgroundColor: '#E6F4EA',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     deleteButton: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    deleteIcon: {
-        fontSize: 24,
+    deleteText: {
+        color: '#2E7D32',
+        fontWeight: '600',
+        fontSize: 16,
     },
 })
 
