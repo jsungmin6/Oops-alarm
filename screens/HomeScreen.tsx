@@ -51,7 +51,14 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
+        <View
+            style={{
+                flex: 1,
+                paddingVertical: 24,
+                paddingHorizontal: 12,
+                backgroundColor: '#f0fff4',
+            }}
+        >
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
 
             <AlarmList
