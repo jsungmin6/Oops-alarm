@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 16,
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#e0e0e0',
+        borderColor: '#66bb6a',
     },
     header: {
         flexDirection: 'row',
