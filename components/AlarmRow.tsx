@@ -77,12 +77,12 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         <Text style={styles.title}>{alarm.name}</Text>
                         <View style={styles.actions}>
                             <TouchableOpacity onPress={() => onEdit(alarm.id)}>
-                                <Text style={styles.actionIcon}>✏️</Text>
+                                <Text style={styles.actionIcon}>수정</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
                             >
-                                <Text style={styles.actionIcon}>🔁</Text>
+                                <Text style={styles.actionIcon}>갱신</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     actionIcon: {
-        fontSize: 20,
+        fontSize: 16,
         marginLeft: 12,
     },
     progress: {
