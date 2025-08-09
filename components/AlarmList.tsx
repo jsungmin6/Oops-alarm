@@ -7,7 +7,7 @@ type Props = {
     alarms: Alarm[]
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (id: string) => void
+    onEdit: (alarm: Alarm) => void
 }
 
 const AlarmList = ({ alarms, deleteAlarm, updateAlarmDate, onEdit }: Props) => (
