@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -51,8 +52,14 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: '#f0fff4', paddingTop: 24 }}
+        >
+            <Text
+                style={{ fontSize: 24, fontWeight: 'bold', marginHorizontal: 24 }}
+            >
+                🕒 내 알람
+            </Text>
 
             <AlarmList
                 alarms={alarms}
@@ -61,7 +68,7 @@ export default function HomeScreen() {
                 onEdit={(id) => navigation.navigate('EditAlarm', { id })}
             />
 
-            <View style={{ marginTop: 24 }}>
+            <View style={{ marginTop: 24, marginHorizontal: 24 }}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('CreateAlarm')}
                     style={{
@@ -71,9 +78,11 @@ export default function HomeScreen() {
                         alignItems: 'center',
                     }}
                 >
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>➕ 알람 등록</Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                        ➕ 알람 등록
+                    </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
