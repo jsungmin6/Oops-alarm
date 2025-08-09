@@ -14,7 +14,11 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="CreateAlarm" component={CreateAlarmScreen} />
             <Stack.Screen name="EditAlarm" component={EditAlarmScreen} />
           </Stack.Navigator>

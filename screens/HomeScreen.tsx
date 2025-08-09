@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -51,29 +52,47 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Text style={styles.title}>🕒 내 알람</Text>
 
-            <AlarmList
-                alarms={alarms}
-                deleteAlarm={deleteAlarm}
-                updateAlarmDate={updateAlarmDate}
-                onEdit={(id) => navigation.navigate('EditAlarm', { id })}
-            />
-
-            <View style={{ marginTop: 24 }}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('CreateAlarm')}
-                    style={{
-                        backgroundColor: '#4caf50',
-                        paddingVertical: 12,
-                        borderRadius: 8,
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>➕ 알람 등록</Text>
-                </TouchableOpacity>
+                <AlarmList
+                    alarms={alarms}
+                    deleteAlarm={deleteAlarm}
+                    updateAlarmDate={updateAlarmDate}
+                    onEdit={(id) => navigation.navigate('EditAlarm', { id })}
+                />
             </View>
-        </View>
+
+            <TouchableOpacity
+                onPress={() => navigation.navigate('CreateAlarm')}
+                style={styles.fab}
+            >
+                <Text style={styles.fabText}>+</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: '#f0fff4' },
+    container: { flex: 1, padding: 24 },
+    title: { fontSize: 24, fontWeight: 'bold' },
+    fab: {
+        position: 'absolute',
+        bottom: 24,
+        alignSelf: 'center',
+        backgroundColor: '#4caf50',
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    fabText: {
+        color: 'white',
+        fontSize: 32,
+        lineHeight: 32,
+        fontWeight: 'bold',
+    },
+})
