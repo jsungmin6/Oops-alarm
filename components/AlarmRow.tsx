@@ -77,12 +77,12 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         <Text style={styles.title}>{alarm.name}</Text>
                         <View style={styles.actions}>
                             <TouchableOpacity onPress={() => onEdit(alarm.id)}>
-                                <Text style={styles.actionIcon}>✏️</Text>
+                                <Text style={styles.actionText}>수정</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
                             >
-                                <Text style={styles.actionIcon}>🔁</Text>
+                                <Text style={styles.actionText}>갱신</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -112,7 +112,6 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 const styles = StyleSheet.create({
     wrapper: {
         marginVertical: 8,
-        borderRadius: 12,
         overflow: 'hidden',
     },
     container: {
@@ -131,8 +130,8 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row',
     },
-    actionIcon: {
-        fontSize: 20,
+    actionText: {
+        fontSize: 16,
         marginLeft: 12,
     },
     progress: {
