@@ -2,9 +2,10 @@ import React from 'react'
 import {
     View,
     Text,
-    TouchableOpacity,
     StyleSheet,
     Animated,
+    Button,
+    TouchableOpacity,
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
@@ -115,11 +116,12 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     <View style={styles.header}>
                         <Text style={styles.title}>{alarm.name}</Text>
                         <View style={styles.actions}>
-                            <TouchableOpacity
-                                onPress={() => updateAlarmDate(alarm.id)}
-                            >
-                                <Text style={styles.actionText}>갱신</Text>
-                            </TouchableOpacity>
+                            <View style={styles.refreshButton}>
+                                <Button
+                                    title="갱신"
+                                    onPress={() => updateAlarmDate(alarm.id)}
+                                />
+                            </View>
                         </View>
                     </View>
                     <Progress.Bar
@@ -155,6 +157,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 16,
         borderRadius: 16,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#e0e0e0',
     },
     header: {
         flexDirection: 'row',
@@ -168,8 +172,7 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row',
     },
-    actionText: {
-        fontSize: 16,
+    refreshButton: {
         marginLeft: 12,
     },
     progress: {
