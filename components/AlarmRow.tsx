@@ -109,6 +109,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 overshootRight={false}
                 friction={3}
                 rightThreshold={40}
+                useNativeAnimations={false}
             >
                 <View style={styles.container}>
                     <View style={styles.header}>
