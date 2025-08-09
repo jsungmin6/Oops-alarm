@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import AlarmList from '../components/AlarmList'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -7,12 +7,14 @@ import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
 import { RootStackParamList } from '../types/navigation'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function HomeScreen() {
     const navigation = useNavigation<
         NativeStackNavigationProp<RootStackParamList, 'Home'>
     >()
     const [alarms, setAlarms] = useState<Alarm[]>([])
+    const insets = useSafeAreaInsets()
 
     useFocusEffect(
         useCallback(() => {
@@ -51,7 +53,9 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}>
+        <SafeAreaView
+            style={{ flex: 1, padding: 24, backgroundColor: '#f0fff4' }}
+        >
             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>🕒 내 알람</Text>
 
             <AlarmList
@@ -61,19 +65,36 @@ export default function HomeScreen() {
                 onEdit={(id) => navigation.navigate('EditAlarm', { id })}
             />
 
-            <View style={{ marginTop: 24 }}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('CreateAlarm')}
-                    style={{
-                        backgroundColor: '#4caf50',
-                        paddingVertical: 12,
-                        borderRadius: 8,
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>➕ 알람 등록</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('CreateAlarm')}
+                style={[styles.fab, { bottom: insets.bottom + 24 }]}
+            >
+                <Text style={styles.fabText}>+</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    fab: {
+        position: 'absolute',
+        alignSelf: 'center',
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#4caf50',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    fabText: {
+        color: '#fff',
+        fontSize: 32,
+        fontWeight: 'bold',
+        lineHeight: 32,
+    },
+})
