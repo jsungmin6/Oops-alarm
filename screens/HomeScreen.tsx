@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import { useNavigation } from '@react-navigation/native'
@@ -68,31 +68,38 @@ export default function HomeScreen() {
                 onEdit={(alarm) =>
                     navigation.navigate('EditAlarm', { id: alarm.id })
                 }
+                footer={
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('CreateAlarm')}
+                        style={{
+                            alignSelf: 'center',
+                            marginTop: 16,
+                            marginBottom: 32,
+                            width: 64,
+                            height: 64,
+                            borderRadius: 32,
+                            backgroundColor: '#4caf50',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 4,
+                            elevation: 5,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 32,
+                                color: 'white',
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            +
+                        </Text>
+                    </TouchableOpacity>
+                }
             />
-
-            <TouchableOpacity
-                onPress={() => navigation.navigate('CreateAlarm')}
-                style={{
-                    position: 'absolute',
-                    bottom: 24,
-                    alignSelf: 'center',
-                    width: 64,
-                    height: 64,
-                    borderRadius: 32,
-                    backgroundColor: '#4caf50',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                    elevation: 5,
-                }}
-            >
-                <Text style={{ fontSize: 32, color: 'white', fontWeight: 'bold' }}>
-                    +
-                </Text>
-            </TouchableOpacity>
         </SafeAreaView>
     )
 }

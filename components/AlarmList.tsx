@@ -8,9 +8,16 @@ type Props = {
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
     onEdit: (alarm: Alarm) => void
+    footer?: React.ReactNode
 }
 
-const AlarmList = ({ alarms, deleteAlarm, updateAlarmDate, onEdit }: Props) => (
+const AlarmList = ({
+    alarms,
+    deleteAlarm,
+    updateAlarmDate,
+    onEdit,
+    footer,
+}: Props) => (
     <FlatList
         data={alarms}
         keyExtractor={(item) => item.id}
@@ -24,13 +31,14 @@ const AlarmList = ({ alarms, deleteAlarm, updateAlarmDate, onEdit }: Props) => (
         )}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
+        ListFooterComponent={footer}
     />
 )
 
 const styles = StyleSheet.create({
     container: {
         paddingTop: 16,
-        paddingBottom: 80,
+        paddingBottom: 32,
     },
 })
 
