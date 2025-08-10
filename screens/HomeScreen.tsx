@@ -6,14 +6,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { RootStackParamList } from '../types/navigation'
+import AddAlarmModal from '../components/AddAlarmModal'
 
 export default function HomeScreen() {
     const navigation = useNavigation<
         NativeStackNavigationProp<RootStackParamList, 'Home'>
     >()
     const [alarms, setAlarms] = useState<Alarm[]>([])
+    const [showAdd, setShowAdd] = useState(false)
+    const addButtonRef = useRef<any>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -50,6 +53,23 @@ export default function HomeScreen() {
         setAlarms(filtered)
     }
 
+    const createId = () =>
+        Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+
+    const handleAdd = async (name: string, interval: number) => {
+        const newAlarm: Alarm = {
+            id: createId(),
+            name,
+            interval,
+            createdAt: new Date().toISOString(),
+        }
+        const json = await AsyncStorage.getItem('alarms')
+        const current: Alarm[] = json ? JSON.parse(json) : []
+        current.push(newAlarm)
+        await AsyncStorage.setItem('alarms', JSON.stringify(current))
+        setAlarms(current)
+    }
+
 
     return (
         <SafeAreaView
@@ -70,7 +90,8 @@ export default function HomeScreen() {
                 }
                 footer={
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('CreateAlarm')}
+                        ref={addButtonRef}
+                        onPress={() => setShowAdd(true)}
                         style={{
                             alignSelf: 'center',
                             marginTop: 16,
@@ -99,6 +120,14 @@ export default function HomeScreen() {
                         </Text>
                     </TouchableOpacity>
                 }
+            />
+            <AddAlarmModal
+                visible={showAdd}
+                onClose={() => {
+                    setShowAdd(false)
+                    addButtonRef.current?.focus?.()
+                }}
+                onSubmit={handleAdd}
             />
         </SafeAreaView>
     )
