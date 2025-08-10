@@ -1,22 +1,19 @@
 import { Text, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback, useRef } from 'react'
-import { RootStackParamList } from '../types/navigation'
 import AddAlarmModal from '../components/AddAlarmModal'
+import EditAlarmModal from '../components/EditAlarmModal'
 
 export default function HomeScreen() {
-    const navigation = useNavigation<
-        NativeStackNavigationProp<RootStackParamList, 'Home'>
-    >()
     const [alarms, setAlarms] = useState<Alarm[]>([])
     const [showAdd, setShowAdd] = useState(false)
     const addButtonRef = useRef<any>(null)
+    const [editingAlarm, setEditingAlarm] = useState<Alarm | null>(null)
+    const [editButtonRef, setEditButtonRef] = useState<any>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -70,6 +67,20 @@ export default function HomeScreen() {
         setAlarms(current)
     }
 
+    const handleUpdate = async (
+        id: string,
+        name: string,
+        interval: number
+    ) => {
+        const json = await AsyncStorage.getItem('alarms')
+        const current: Alarm[] = json ? JSON.parse(json) : []
+        const updated = current.map((alarm) =>
+            alarm.id === id ? { ...alarm, name, interval } : alarm
+        )
+        await AsyncStorage.setItem('alarms', JSON.stringify(updated))
+        setAlarms(updated)
+    }
+
 
     return (
         <SafeAreaView
@@ -85,9 +96,10 @@ export default function HomeScreen() {
                 alarms={alarms}
                 deleteAlarm={deleteAlarm}
                 updateAlarmDate={updateAlarmDate}
-                onEdit={(alarm) =>
-                    navigation.navigate('EditAlarm', { id: alarm.id })
-                }
+                onEdit={(alarm, ref) => {
+                    setEditingAlarm(alarm)
+                    setEditButtonRef(ref)
+                }}
                 footer={
                     <TouchableOpacity
                         ref={addButtonRef}
@@ -128,6 +140,15 @@ export default function HomeScreen() {
                     addButtonRef.current?.focus?.()
                 }}
                 onSubmit={handleAdd}
+            />
+            <EditAlarmModal
+                visible={editingAlarm !== null}
+                alarm={editingAlarm}
+                onClose={() => {
+                    setEditingAlarm(null)
+                    editButtonRef?.current?.focus?.()
+                }}
+                onSubmit={handleUpdate}
             />
         </SafeAreaView>
     )

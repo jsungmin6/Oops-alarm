@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import {
     View,
     Text,
@@ -14,7 +14,7 @@ type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (alarm: Alarm) => void
+    onEdit: (alarm: Alarm, ref: React.RefObject<any>) => void
 }
 
 const calculateProgress = (createdAt: string, interval: number) => {
@@ -34,6 +34,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         alarm.createdAt,
         alarm.interval
     )
+
+    const editRef = useRef<any>(null)
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -75,7 +77,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     ]}
                 >
                     <TouchableOpacity
-                        onPress={() => onEdit(alarm)}
+                        ref={editRef}
+                        onPress={() => onEdit(alarm, editRef)}
                         style={styles.actionButton}
                     >
                         <Text style={styles.actionLabel}>수정</Text>
