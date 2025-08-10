@@ -41,6 +41,9 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const editRef = useRef<any>(null)
     const swipeableRef = useRef<Swipeable | null>(null)
 
+    const isDue = remainingDays === 0
+    const progressColor = isDue ? '#FFD700' : '#4caf50'
+
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
 
@@ -112,7 +115,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     }
 
     return (
-        <View style={styles.wrapper}>
+        <View style={[styles.wrapper, isDue && styles.dueWrapper]}>
             <Swipeable
                 ref={swipeableRef}
                 renderRightActions={renderRightActions}
@@ -138,7 +141,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         width={null}
                         height={14}
                         borderRadius={7}
-                        color="#4caf50"
+                        color={progressColor}
                         unfilledColor="#e0f2f1"
                         style={styles.progress}
                     />
@@ -164,6 +167,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#bdbdbd',
+    },
+    dueWrapper: {
+        borderColor: '#757575',
     },
     container: {
         backgroundColor: '#fff',
