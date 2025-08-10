@@ -33,6 +33,14 @@ const calculateProgress = (createdAt: string, interval: number) => {
     }
 }
 
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}/${month}/${day}`
+}
+
 const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const { progress, remainingDays } = calculateProgress(
         alarm.createdAt,
@@ -138,7 +146,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                                 onPress={() => updateAlarmDate(alarm.id)}
                                 style={styles.refreshButton}
                             >
-                                <Text style={styles.refreshButtonText}>갱신</Text>
+                                <View style={styles.refreshButtonContent}>
+                                    <Text style={styles.refreshButtonText}>갱신</Text>
+                                    {isDue && <View style={styles.redDot} />}
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -153,7 +164,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     />
                     <View style={styles.footer}>
                         <Text style={styles.subText}>
-                            시작일: {new Date(alarm.createdAt).toLocaleDateString()}
+                            시작일: {formatDate(alarm.createdAt)}
                         </Text>
                         <Text style={styles.subText}>
                             남은 일수: {remainingDays}일
@@ -167,7 +178,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
 const styles = StyleSheet.create({
     wrapper: {
-        marginVertical: 8,
+        marginVertical: 4,
         borderRadius: 16,
         overflow: 'hidden',
         backgroundColor: '#fff',
@@ -179,7 +190,7 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: '#fff',
-        padding: 16,
+        padding: 12,
     },
     header: {
         flexDirection: 'row',
@@ -201,18 +212,29 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderRadius: 8,
     },
+    refreshButtonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    redDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: '#f44336',
+        marginLeft: 4,
+    },
     refreshButtonText: {
         color: '#fff',
         fontSize: 14,
         fontWeight: '500',
     },
     progress: {
-        marginTop: 12,
+        marginTop: 8,
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 8,
+        marginTop: 4,
     },
     subText: {
         fontSize: 12,
