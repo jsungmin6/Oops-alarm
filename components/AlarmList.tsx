@@ -7,7 +7,7 @@ type Props = {
     alarms: Alarm[]
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (alarm: Alarm) => void
+    onEdit: (alarm: Alarm, ref: React.RefObject<any>) => void
     footer?: React.ReactElement | null
 }
 
