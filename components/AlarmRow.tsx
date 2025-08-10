@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Animated,
+    Image,
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
@@ -132,7 +133,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 rightThreshold={40}
                 useNativeAnimations={false}
             >
-                <View style={styles.container}>
+                <View style={[styles.container, isDue && styles.dueContainer]}>
                     <View style={styles.header}>
                         <Text
                             style={styles.title}
@@ -153,15 +154,23 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <Progress.Bar
-                        progress={progress}
-                        width={null}
-                        height={14}
-                        borderRadius={7}
-                        color={progressColor}
-                        unfilledColor="#e0f2f1"
-                        style={styles.progress}
-                    />
+                    <View style={styles.progressContainer}>
+                        <Progress.Bar
+                            progress={progress}
+                            width={null}
+                            height={14}
+                            borderRadius={7}
+                            color={progressColor}
+                            unfilledColor="#e0f2f1"
+                            style={styles.progress}
+                        />
+                        {isDue && (
+                            <Image
+                                source={require('../assets/alarm.png')}
+                                style={styles.progressIcon}
+                            />
+                        )}
+                    </View>
                     <View style={styles.footer}>
                         <Text style={styles.subText}>
                             시작일: {formatDate(alarm.createdAt)}
@@ -187,10 +196,14 @@ const styles = StyleSheet.create({
     },
     dueWrapper: {
         borderColor: '#757575',
+        backgroundColor: '#e8f5e9',
     },
     container: {
         backgroundColor: '#fff',
         padding: 12,
+    },
+    dueContainer: {
+        backgroundColor: '#e8f5e9',
     },
     header: {
         flexDirection: 'row',
@@ -228,8 +241,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
     },
-    progress: {
+    progressContainer: {
         marginTop: 8,
+        justifyContent: 'center',
+        position: 'relative',
+    },
+    progress: {},
+    progressIcon: {
+        position: 'absolute',
+        right: -10,
+        top: '50%',
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        transform: [{ translateY: -10 }],
     },
     footer: {
         flexDirection: 'row',
