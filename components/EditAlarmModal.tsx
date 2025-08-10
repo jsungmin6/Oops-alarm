@@ -111,6 +111,7 @@ export default function EditAlarmModal({
                         style={styles.input}
                         value={name}
                         onChangeText={onChangeName}
+                        maxLength={50}
                         autoFocus
                     />
                     {nameError ? <Text style={styles.error}>{nameError}</Text> : null}

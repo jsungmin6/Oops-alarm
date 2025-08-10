@@ -82,6 +82,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
                         style={styles.input}
                         value={name}
                         onChangeText={onChangeName}
+                        maxLength={50}
                         placeholder="예: 칫솔 교체"
                         autoFocus
                     />

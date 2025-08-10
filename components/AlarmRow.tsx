@@ -126,7 +126,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
             >
                 <View style={styles.container}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>{alarm.name}</Text>
+                        <Text
+                            style={styles.title}
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                        >
+                            {alarm.name}
+                        </Text>
                         <View style={styles.actions}>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
@@ -177,12 +183,14 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        alignItems: 'center',
     },
     title: {
+        flex: 1,
         fontSize: 20,
         fontWeight: 'bold',
+        marginRight: 8,
+        flexShrink: 1,
     },
     actions: {
         flexDirection: 'row',
