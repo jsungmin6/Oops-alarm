@@ -6,14 +6,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
+import type { ElementRef } from 'react'
 import { RootStackParamList } from '../types/navigation'
+import CreateAlarmModal from '../components/CreateAlarmModal'
 
 export default function HomeScreen() {
     const navigation = useNavigation<
         NativeStackNavigationProp<RootStackParamList, 'Home'>
     >()
     const [alarms, setAlarms] = useState<Alarm[]>([])
+    const [showModal, setShowModal] = useState(false)
+    const addButtonRef = useRef<ElementRef<typeof TouchableOpacity>>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -50,11 +54,39 @@ export default function HomeScreen() {
         setAlarms(filtered)
     }
 
+    const createId = () =>
+        Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+
+    const handleAddAlarm = async (data: {
+        name: string
+        interval: number
+    }) => {
+        const newAlarm: Alarm = {
+            id: createId(),
+            name: data.name,
+            interval: data.interval,
+            createdAt: new Date().toISOString(),
+        }
+        const updated = [...alarms, newAlarm]
+        await AsyncStorage.setItem('alarms', JSON.stringify(updated))
+        setAlarms(updated)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
+        addButtonRef.current?.focus()
+    }
+
 
     return (
         <SafeAreaView
             style={{ flex: 1, backgroundColor: '#f0fff4', paddingTop: 24 }}
         >
+            <CreateAlarmModal
+                visible={showModal}
+                onClose={closeModal}
+                onSubmit={handleAddAlarm}
+            />
             <Text
                 style={{ fontSize: 24, fontWeight: 'bold', marginHorizontal: 24 }}
             >
@@ -70,7 +102,8 @@ export default function HomeScreen() {
                 }
                 footer={
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('CreateAlarm')}
+                        ref={addButtonRef}
+                        onPress={() => setShowModal(true)}
                         style={{
                             alignSelf: 'center',
                             marginTop: 16,
