@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FlatList, StyleSheet } from 'react-native'
 import AlarmRow from './AlarmRow'
 import { Alarm } from '../types/Alarm'
@@ -22,23 +22,45 @@ const AlarmList = ({
     updateAlarmDate,
     onEdit,
     footer,
-}: Props) => (
-    <FlatList
-        data={alarms}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-            <AlarmRow
-                alarm={item}
-                deleteAlarm={deleteAlarm}
-                updateAlarmDate={updateAlarmDate}
-                onEdit={onEdit}
-            />
-        )}
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={footer}
-    />
-)
+}: Props) => {
+    const sortedAlarms = useMemo(() => {
+        const now = new Date()
+        return [...alarms].sort((a, b) => {
+            const diffA = Math.floor(
+                (now.getTime() - new Date(a.createdAt).getTime()) /
+                    (1000 * 60 * 60 * 24)
+            )
+            const diffB = Math.floor(
+                (now.getTime() - new Date(b.createdAt).getTime()) /
+                    (1000 * 60 * 60 * 24)
+            )
+            const remainingA = Math.max(a.interval - diffA, 0)
+            const remainingB = Math.max(b.interval - diffB, 0)
+            if (remainingA === remainingB) {
+                return a.name.localeCompare(b.name)
+            }
+            return remainingA - remainingB
+        })
+    }, [alarms])
+
+    return (
+        <FlatList
+            data={sortedAlarms}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+                <AlarmRow
+                    alarm={item}
+                    deleteAlarm={deleteAlarm}
+                    updateAlarmDate={updateAlarmDate}
+                    onEdit={onEdit}
+                />
+            )}
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={footer}
+        />
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
