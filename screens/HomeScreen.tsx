@@ -105,11 +105,11 @@ export default function HomeScreen() {
                     marginHorizontal: 24,
                 }}
             >
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
                 <Image
                     source={require('../assets/alarm.png')}
-                    style={{ width: 24, height: 24, marginRight: 8 }}
+                    style={{ width: 28, height: 28, marginLeft: 8 }}
                 />
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
             </View>
 
             <AlarmList
