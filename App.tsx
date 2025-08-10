@@ -1,10 +1,9 @@
-import {StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
-import EditAlarmScreen from './screens/EditAlarmScreen'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -18,7 +17,6 @@ export default function App() {
               component={HomeScreen}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="EditAlarm" component={EditAlarmScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>
