@@ -35,8 +35,9 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
     }, [visible])
 
     const onChangeName = (text: string) => {
-        setName(text)
-        const trimmed = text.trim()
+        const limited = text.slice(0, 50)
+        setName(limited)
+        const trimmed = limited.trim()
         setNameError(trimmed ? '' : '알람 제목을 입력해 주세요.')
     }
 
@@ -84,6 +85,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
                         onChangeText={onChangeName}
                         placeholder="예: 칫솔 교체"
                         autoFocus
+                        maxLength={50}
                     />
                     {nameError ? (
                         <Text style={styles.error}>{nameError}</Text>
