@@ -191,11 +191,11 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         overflow: 'hidden',
         backgroundColor: '#fff',
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#bdbdbd',
+        borderWidth: 2,
+        borderColor: '#006400',
     },
     dueWrapper: {
-        borderColor: '#757575',
+        borderColor: '#FFD700',
         backgroundColor: '#e8f5e9',
     },
     container: {
@@ -249,12 +249,12 @@ const styles = StyleSheet.create({
     progress: {},
     progressIcon: {
         position: 'absolute',
-        right: -10,
+        right: -12,
         top: '50%',
-        width: 20,
-        height: 20,
+        width: 24,
+        height: 24,
         resizeMode: 'contain',
-        transform: [{ translateY: -10 }],
+        transform: [{ translateY: -12 }],
     },
     footer: {
         flexDirection: 'row',
