@@ -14,7 +14,7 @@ type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (alarm: Alarm, triggerRef: any) => void
+    onEdit: (alarm: Alarm, triggerRef: any, swipeRef: Swipeable | null) => void
 }
 
 const calculateProgress = (createdAt: string, interval: number) => {
@@ -35,6 +35,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         alarm.interval
     )
     const editRef = useRef<any>(null)
+    const swipeRef = useRef<Swipeable | null>(null)
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -77,7 +78,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 >
                     <TouchableOpacity
                         ref={editRef}
-                        onPress={() => onEdit(alarm, editRef.current)}
+                        onPress={() => onEdit(alarm, editRef.current, swipeRef.current)}
                         style={styles.actionButton}
                     >
                         <Text style={styles.actionLabel}>수정</Text>
@@ -107,6 +108,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     return (
         <View style={styles.wrapper}>
             <Swipeable
+                ref={swipeRef}
                 renderRightActions={renderRightActions}
                 overshootRight={false}
                 friction={3}
@@ -153,13 +155,12 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         borderRadius: 16,
         overflow: 'hidden',
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#bdbdbd',
     },
     container: {
         backgroundColor: '#fff',
         padding: 16,
-        borderRadius: 16,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#bdbdbd',
     },
     header: {
         flexDirection: 'row',
