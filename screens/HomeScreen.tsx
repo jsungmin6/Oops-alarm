@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback, useRef } from 'react'
 import AddAlarmModal from '../components/AddAlarmModal'
 import EditAlarmModal from '../components/EditAlarmModal'
+import { Swipeable } from 'react-native-gesture-handler'
 
 export default function HomeScreen() {
     const [alarms, setAlarms] = useState<Alarm[]>([])
@@ -14,6 +15,7 @@ export default function HomeScreen() {
     const addButtonRef = useRef<any>(null)
     const [editingAlarm, setEditingAlarm] = useState<Alarm | null>(null)
     const editButtonRef = useRef<any>(null)
+    const editingSwipeRef = useRef<Swipeable | null>(null)
 
     useFocusEffect(
         useCallback(() => {
@@ -87,6 +89,8 @@ export default function HomeScreen() {
         )
         await AsyncStorage.setItem('alarms', JSON.stringify(updated))
         setAlarms(updated)
+        editingSwipeRef.current?.close()
+        editingSwipeRef.current = null
     }
 
 
@@ -104,8 +108,9 @@ export default function HomeScreen() {
                 alarms={alarms}
                 deleteAlarm={deleteAlarm}
                 updateAlarmDate={updateAlarmDate}
-                onEdit={(alarm, ref) => {
+                onEdit={(alarm, ref, swipeRef) => {
                     editButtonRef.current = ref
+                    editingSwipeRef.current = swipeRef
                     setEditingAlarm(alarm)
                 }}
                 footer={
@@ -154,6 +159,8 @@ export default function HomeScreen() {
                 alarm={editingAlarm}
                 onClose={() => {
                     setEditingAlarm(null)
+                    editingSwipeRef.current?.close()
+                    editingSwipeRef.current = null
                     editButtonRef.current?.focus?.()
                 }}
                 onSubmit={handleEdit}
