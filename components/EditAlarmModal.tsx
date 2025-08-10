@@ -55,8 +55,9 @@ export default function EditAlarmModal({
     }, [visible, alarm])
 
     const onChangeName = (text: string) => {
-        setName(text)
-        const trimmed = text.trim()
+        const limited = text.slice(0, 50)
+        setName(limited)
+        const trimmed = limited.trim()
         setNameError(trimmed ? '' : '알람 제목을 입력해 주세요.')
     }
 
@@ -112,6 +113,7 @@ export default function EditAlarmModal({
                         value={name}
                         onChangeText={onChangeName}
                         autoFocus
+                        maxLength={50}
                     />
                     {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
 

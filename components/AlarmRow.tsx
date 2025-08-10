@@ -183,9 +183,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: 'bold',
+        flex: 1,
+        marginRight: 8,
+        flexWrap: 'wrap',
     },
     actions: {
         flexDirection: 'row',
+        flexShrink: 0,
     },
     refreshButton: {
         backgroundColor: '#4caf50',
