@@ -2,12 +2,13 @@ import React from 'react'
 import { FlatList, StyleSheet } from 'react-native'
 import AlarmRow from './AlarmRow'
 import { Alarm } from '../types/Alarm'
+import type { Swipeable } from 'react-native-gesture-handler'
 
 type Props = {
     alarms: Alarm[]
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (alarm: Alarm, triggerRef: any) => void
+    onEdit: (alarm: Alarm, triggerRef: any, swipeRef: Swipeable | null) => void
     footer?: React.ReactElement | null
 }
 
