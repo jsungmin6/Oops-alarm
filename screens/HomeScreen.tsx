@@ -107,8 +107,8 @@ export default function HomeScreen() {
             >
                 <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
                 <Image
-                    source={require('../assets/alarm.png')}
-                    style={{ width: 28, height: 28, marginLeft: 8 }}
+                    source={require('../assets/alarm_smile.png')}
+                    style={{ width: 40, height: 40, marginLeft: 8 }}
                 />
             </View>
 
