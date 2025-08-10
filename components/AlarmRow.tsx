@@ -145,7 +145,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         <View style={styles.actions}>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
-                                style={styles.refreshButton}
+                                style={[
+                                    styles.refreshButton,
+                                    { backgroundColor: progressColor },
+                                ]}
                             >
                                 <View style={styles.refreshButtonContent}>
                                     <Text style={styles.refreshButtonText}>갱신</Text>
@@ -213,7 +216,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     refreshButton: {
-        backgroundColor: '#4caf50',
         paddingVertical: 4,
         paddingHorizontal: 12,
         borderRadius: 8,
