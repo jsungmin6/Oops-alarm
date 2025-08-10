@@ -111,8 +111,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         )
     }
 
+    const isDue = remainingDays === 0
+
     return (
-        <View style={styles.wrapper}>
+        <View style={[styles.wrapper, isDue && styles.wrapperDue]}>
             <Swipeable
                 ref={swipeableRef}
                 renderRightActions={renderRightActions}
@@ -138,7 +140,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         width={null}
                         height={14}
                         borderRadius={7}
-                        color="#4caf50"
+                        color={isDue ? '#FFD700' : '#4caf50'}
                         unfilledColor="#e0f2f1"
                         style={styles.progress}
                     />
@@ -164,6 +166,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#bdbdbd',
+    },
+    wrapperDue: {
+        borderColor: '#9e9e9e',
     },
     container: {
         backgroundColor: '#fff',
