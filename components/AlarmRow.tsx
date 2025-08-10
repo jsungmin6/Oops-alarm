@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import {
     View,
     Text,
@@ -14,7 +14,7 @@ type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
-    onEdit: (alarm: Alarm) => void
+    onEdit: (alarm: Alarm, ref: any) => void
 }
 
 const calculateProgress = (createdAt: string, interval: number) => {
@@ -30,6 +30,7 @@ const calculateProgress = (createdAt: string, interval: number) => {
 }
 
 const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
+    const editButtonRef = useRef<any>(null)
     const { progress, remainingDays } = calculateProgress(
         alarm.createdAt,
         alarm.interval
@@ -75,7 +76,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     ]}
                 >
                     <TouchableOpacity
-                        onPress={() => onEdit(alarm)}
+                        ref={editButtonRef}
+                        onPress={() => onEdit(alarm, editButtonRef)}
                         style={styles.actionButton}
                     >
                         <Text style={styles.actionLabel}>수정</Text>
