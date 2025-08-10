@@ -9,6 +9,7 @@ import {
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
+import formatDate from '../utils/date'
 
 type Props = {
     alarm: Alarm
@@ -138,7 +139,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                                 onPress={() => updateAlarmDate(alarm.id)}
                                 style={styles.refreshButton}
                             >
-                                <Text style={styles.refreshButtonText}>갱신</Text>
+                                <View style={styles.refreshContent}>
+                                    <Text style={styles.refreshButtonText}>갱신</Text>
+                                    {isDue && <View style={styles.dueDot} />}
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -153,7 +157,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     />
                     <View style={styles.footer}>
                         <Text style={styles.subText}>
-                            시작일: {new Date(alarm.createdAt).toLocaleDateString()}
+                            시작일: {formatDate(new Date(alarm.createdAt))}
                         </Text>
                         <Text style={styles.subText}>
                             남은 일수: {remainingDays}일
@@ -167,7 +171,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
 const styles = StyleSheet.create({
     wrapper: {
-        marginVertical: 8,
+        marginVertical: 4,
         borderRadius: 16,
         overflow: 'hidden',
         backgroundColor: '#fff',
@@ -201,10 +205,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderRadius: 8,
     },
+    refreshContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     refreshButtonText: {
         color: '#fff',
         fontSize: 14,
         fontWeight: '500',
+    },
+    dueDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: '#f44336',
+        marginLeft: 4,
     },
     progress: {
         marginTop: 12,

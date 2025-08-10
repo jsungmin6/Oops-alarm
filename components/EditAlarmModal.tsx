@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { Alarm } from '../types/Alarm'
+import formatDate from '../utils/date'
 
 interface Props {
     visible: boolean
@@ -118,7 +119,7 @@ export default function EditAlarmModal({
 
                     <Text style={styles.label}>시작일</Text>
                     <Pressable onPress={openPicker} style={styles.input}>
-                        <Text>{startDate.toISOString().slice(0, 10)}</Text>
+                        <Text>{formatDate(startDate)}</Text>
                     </Pressable>
                     {showPicker && (
                         <Modal transparent animationType="fade">
