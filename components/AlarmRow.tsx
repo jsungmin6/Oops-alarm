@@ -161,6 +161,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             height={14}
                             borderRadius={7}
                             color={progressColor}
+                            borderColor={progressColor}
                             unfilledColor="#e0f2f1"
                             style={styles.progress}
                         />
@@ -192,18 +193,18 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         backgroundColor: '#fff',
         borderWidth: 2,
-        borderColor: '#006400',
+        borderColor: '#4caf50',
     },
     dueWrapper: {
         borderColor: '#FFD700',
-        backgroundColor: '#e8f5e9',
+        backgroundColor: '#fff',
     },
     container: {
         backgroundColor: '#fff',
         padding: 12,
     },
     dueContainer: {
-        backgroundColor: '#e8f5e9',
+        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
@@ -249,12 +250,12 @@ const styles = StyleSheet.create({
     progress: {},
     progressIcon: {
         position: 'absolute',
-        right: -12,
+        right: -16,
         top: '50%',
-        width: 24,
-        height: 24,
+        width: 32,
+        height: 32,
         resizeMode: 'contain',
-        transform: [{ translateY: -12 }],
+        transform: [{ translateY: -16 }],
     },
     footer: {
         flexDirection: 'row',
