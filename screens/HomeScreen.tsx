@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity, View, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -98,11 +98,20 @@ export default function HomeScreen() {
         <SafeAreaView
             style={{ flex: 1, backgroundColor: '#f0fff4', paddingTop: 24 }}
         >
-            <Text
-                style={{ fontSize: 24, fontWeight: 'bold', marginHorizontal: 24 }}
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginHorizontal: 24,
+                }}
             >
-                🕒 내 알람
-            </Text>
+                <Image
+                    source={require('../assets/alarm.png')}
+                    style={{ width: 24, height: 24, marginRight: 8 }}
+                    resizeMode="contain"
+                />
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
+            </View>
 
             <AlarmList
                 alarms={alarms}
