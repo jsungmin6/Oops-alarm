@@ -158,13 +158,13 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#E5E5EA',
         borderRadius: 8,
         padding: 12,
         marginTop: 8,
     },
     error: {
-        color: 'red',
+        color: '#FF3B30',
         marginTop: 4,
         fontSize: 12,
     },
@@ -181,13 +181,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 4,
     },
     cancelButton: {
-        backgroundColor: '#a5d6a7',
+        backgroundColor: '#8E8E93',
     },
     submitButton: {
-        backgroundColor: '#4caf50',
+        backgroundColor: '#007AFF',
     },
     buttonDisabled: {
-        backgroundColor: '#c8e6c9',
+        backgroundColor: '#A5A5A5',
     },
     buttonText: {
         color: '#fff',
