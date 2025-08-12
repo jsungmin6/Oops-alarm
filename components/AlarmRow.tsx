@@ -51,7 +51,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const swipeableRef = useRef<Swipeable | null>(null)
 
     const isDue = remainingDays === 0
-    const progressColor = isDue ? '#FFD700' : '#4caf50'
+    const progressColor = isDue ? '#FFCC00' : '#34C759'
+    const refreshTextColor = isDue ? '#000' : '#fff'
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -151,7 +152,14 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                                 ]}
                             >
                                 <View style={styles.refreshButtonContent}>
-                                    <Text style={styles.refreshButtonText}>갱신</Text>
+                                    <Text
+                                        style={[
+                                            styles.refreshButtonText,
+                                            { color: refreshTextColor },
+                                        ]}
+                                    >
+                                        갱신
+                                    </Text>
                                     {isDue && <View style={styles.redDot} />}
                                 </View>
                             </TouchableOpacity>
@@ -165,7 +173,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             borderRadius={7}
                             color={progressColor}
                             borderColor={progressColor}
-                            unfilledColor="#e0f2f1"
+                            unfilledColor="#E5E5EA"
                             style={styles.progress}
                         />
                         {isDue && (
@@ -228,7 +236,7 @@ const styles = StyleSheet.create({
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: '#f44336',
+        backgroundColor: '#FF3B30',
         marginLeft: 4,
     },
     refreshButtonText: {
@@ -258,7 +266,7 @@ const styles = StyleSheet.create({
     },
     subText: {
         fontSize: 12,
-        color: '#888',
+        color: '#8E8E93',
     },
     actionsContainer: {
         height: '100%',
@@ -274,10 +282,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     editAction: {
-        backgroundColor: '#81C784',
+        backgroundColor: '#007AFF',
     },
     deleteAction: {
-        backgroundColor: '#388E3C',
+        backgroundColor: '#FF3B30',
     },
     actionButton: {
         flex: 1,

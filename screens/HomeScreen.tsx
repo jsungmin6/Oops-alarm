@@ -96,7 +96,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView
-            style={{ flex: 1, backgroundColor: '#f0fff4', paddingTop: 24 }}
+            style={{ flex: 1, backgroundColor: '#F2F2F7', paddingTop: 24 }}
         >
             <View
                 style={{
@@ -105,7 +105,11 @@ export default function HomeScreen() {
                     marginHorizontal: 24,
                 }}
             >
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
+                <Text
+                    style={{ fontSize: 24, fontWeight: 'bold', color: '#1C1C1E' }}
+                >
+                    내 알람
+                </Text>
                 <Image
                     source={require('../assets/alarm_smile.png')}
                     style={{ width: 40, height: 40, marginLeft: 8 }}
@@ -132,7 +136,7 @@ export default function HomeScreen() {
                             width: 64,
                             height: 64,
                             borderRadius: 32,
-                            backgroundColor: '#4caf50',
+                            backgroundColor: '#007AFF',
                             justifyContent: 'center',
                             alignItems: 'center',
                             shadowColor: '#000',
