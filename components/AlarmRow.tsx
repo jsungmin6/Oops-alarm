@@ -274,6 +274,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 20,
         fontWeight: 'bold',
+        fontFamily: 'Jua-Regular',
         marginRight: 8,
         flexShrink: 1,
     },
