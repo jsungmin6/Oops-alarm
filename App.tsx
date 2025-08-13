@@ -5,6 +5,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useFonts } from 'expo-font'
 import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
+import mobileAds from 'react-native-google-mobile-ads'
+import { useEffect } from 'react'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -12,6 +14,10 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'Jua-Regular': require('./assets/fonts/Jua-Regular.ttf'),
   })
+
+  useEffect(() => {
+    mobileAds().initialize()
+  }, [])
 
   if (!fontsLoaded) {
     return null
