@@ -9,10 +9,9 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
-    Pressable,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DatePickerField from './DatePickerField'
 import { Alarm } from '../types/Alarm'
 
 interface Props {
@@ -36,8 +35,6 @@ export default function EditAlarmModal({
     const [name, setName] = useState('')
     const [interval, setInterval] = useState('')
     const [startDate, setStartDate] = useState(new Date())
-    const [tempDate, setTempDate] = useState(new Date())
-    const [showPicker, setShowPicker] = useState(false)
     const [nameError, setNameError] = useState('')
     const [intervalError, setIntervalError] = useState('')
     const [saving, setSaving] = useState(false)
@@ -48,7 +45,6 @@ export default function EditAlarmModal({
             setInterval(String(alarm.interval))
             const d = new Date(alarm.createdAt)
             setStartDate(d)
-            setTempDate(d)
             setNameError('')
             setIntervalError('')
         }
@@ -84,15 +80,6 @@ export default function EditAlarmModal({
         onClose()
     }
 
-    const openPicker = () => {
-        setTempDate(startDate)
-        setShowPicker(true)
-    }
-
-    const onChangeTempDate = (_: any, selected?: Date) => {
-        if (selected) setTempDate(selected)
-    }
-
     return (
         <Modal
             visible={visible}
@@ -117,45 +104,11 @@ export default function EditAlarmModal({
                     {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
 
                     <Text style={styles.label}>시작일</Text>
-                    <Pressable onPress={openPicker} style={styles.input}>
-                        <Text>{startDate.toISOString().slice(0, 10)}</Text>
-                    </Pressable>
-                    {showPicker && (
-                        <Modal transparent animationType="fade">
-                            <View style={styles.modalOverlay}>
-                                <View style={styles.modalContent}>
-                                    <DateTimePicker
-                                        value={tempDate}
-                                        mode="date"
-                                        display={
-                                            Platform.OS === 'ios'
-                                                ? 'spinner'
-                                                : 'calendar'
-                                        }
-                                        onChange={onChangeTempDate}
-                                        style={styles.modalPicker}
-                                    />
-                                    <View style={styles.modalButtons}>
-                                        <TouchableOpacity
-                                            style={[styles.pickerButton, styles.pickerCancel]}
-                                            onPress={() => setShowPicker(false)}
-                                        >
-                                            <Text>취소</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[styles.pickerButton, styles.pickerConfirm]}
-                                            onPress={() => {
-                                                setStartDate(tempDate)
-                                                setShowPicker(false)
-                                            }}
-                                        >
-                                            <Text>확인</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
+                    <DatePickerField
+                        value={startDate}
+                        onChange={setStartDate}
+                        style={styles.input}
+                    />
 
                     <Text style={styles.label}>주기 (일)</Text>
                     <TextInput
@@ -258,40 +211,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-    },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    modalContent: {
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    modalPicker: {
-        backgroundColor: '#fff',
-    },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginTop: 12,
-    },
-    pickerButton: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 8,
-        marginHorizontal: 4,
-        borderRadius: 4,
-    },
-    pickerCancel: {
-        backgroundColor: '#eee',
-    },
-    pickerConfirm: {
-        backgroundColor: '#ddd',
     },
 })
 
