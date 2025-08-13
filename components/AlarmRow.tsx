@@ -1,5 +1,13 @@
-import React, { useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import React, { useRef, useEffect } from 'react'
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    Animated,
+    AccessibilityInfo,
+} from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
@@ -44,9 +52,39 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const swipeableRef = useRef<Swipeable | null>(null)
 
     const isDue = remainingDays === 0
-    const progressColor = '#4caf50'
+    const progressColor = isDue ? '#FFD700' : '#4caf50'
     const backgroundColor = '#f0fff4'
     const borderColor = '#A5D6A7'
+
+    const glowAnim = useRef(new Animated.Value(0)).current
+    useEffect(() => {
+        let animation: Animated.CompositeAnimation | undefined
+        let mounted = true
+        if (isDue) {
+            AccessibilityInfo.isReduceMotionEnabled().then((reduce) => {
+                if (reduce || !mounted) return
+                animation = Animated.loop(
+                    Animated.sequence([
+                        Animated.timing(glowAnim, {
+                            toValue: 1,
+                            duration: 1500,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(glowAnim, {
+                            toValue: 0,
+                            duration: 1500,
+                            useNativeDriver: true,
+                        }),
+                    ])
+                )
+                animation.start()
+            })
+        }
+        return () => {
+            mounted = false
+            animation && animation.stop()
+        }
+    }, [isDue, glowAnim])
 
     const ACTION_WIDTH = 60
 
@@ -119,6 +157,21 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             style={styles.progress}
                         />
                         {isDue && (
+                            <Animated.View
+                                pointerEvents="none"
+                                style={[
+                                    StyleSheet.absoluteFillObject,
+                                    styles.glowOverlay,
+                                    {
+                                        opacity: glowAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0.3, 0.7],
+                                        }),
+                                    },
+                                ]}
+                            />
+                        )}
+                        {isDue && (
                             <Image
                                 source={require('../assets/alarm.png')}
                                 style={styles.progressIcon}
@@ -142,7 +195,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 const styles = StyleSheet.create({
     wrapper: {
         marginVertical: 8,
-        borderRadius: 16,
+        borderRadius: 6,
         overflow: 'hidden',
         borderWidth: 2,
     },
@@ -211,9 +264,17 @@ const styles = StyleSheet.create({
     actionsContainer: {
         height: '100%',
         overflow: 'hidden',
-        borderTopRightRadius: 16,
-        borderBottomRightRadius: 16,
+        borderTopRightRadius: 6,
+        borderBottomRightRadius: 6,
         flexDirection: 'row',
+    },
+    glowOverlay: {
+        borderRadius: 7,
+        shadowColor: '#FFD700',
+        shadowOpacity: 1,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 0 },
+        elevation: 3,
     },
     action: {
         justifyContent: 'center',
