@@ -301,6 +301,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         fontWeight: '500',
+        fontFamily: 'Jua-Regular',
     },
     progressContainer: {
         marginTop: 8,
@@ -347,6 +348,7 @@ const styles = StyleSheet.create({
     subText: {
         fontSize: 12,
         color: '#888',
+        fontFamily: 'Jua-Regular',
     },
     actionsContainer: {
         height: '100%',
@@ -369,6 +371,7 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: '600',
         fontSize: 16,
+        fontFamily: 'Jua-Regular',
     },
 })
 
