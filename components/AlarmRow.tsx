@@ -52,6 +52,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
     const isDue = remainingDays === 0
     const progressColor = isDue ? '#FFD700' : '#4caf50'
+    const cardBackgroundColor = isDue ? '#fffde7' : '#e8f5e9'
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -124,7 +125,12 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     }
 
     return (
-        <View style={[styles.wrapper, { borderColor: progressColor }]}>
+        <View
+            style={[
+                styles.wrapper,
+                { borderColor: progressColor, backgroundColor: cardBackgroundColor },
+            ]}
+        >
             <Swipeable
                 ref={swipeableRef}
                 renderRightActions={renderRightActions}
@@ -133,7 +139,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 rightThreshold={40}
                 useNativeAnimations={false}
             >
-                <View style={styles.container}>
+                <View style={[styles.container, { backgroundColor: cardBackgroundColor }]}>
                     <View style={styles.header}>
                         <Text
                             style={styles.title}
@@ -191,14 +197,12 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
 const styles = StyleSheet.create({
     wrapper: {
-        marginVertical: 4,
+        marginVertical: 8,
         borderRadius: 16,
         overflow: 'hidden',
-        backgroundColor: '#fff',
         borderWidth: 2,
     },
     container: {
-        backgroundColor: '#fff',
         padding: 12,
     },
     header: {
