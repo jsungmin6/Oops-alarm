@@ -12,6 +12,13 @@ import {
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
+const formatKoreanDate = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}년 ${month}월 ${day}일`
+}
+
 interface Props {
     value: Date
     onChange: (date: Date) => void
@@ -44,7 +51,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
     return (
         <>
             <Pressable onPress={open} style={style}>
-                <Text style={styles.dateText}>{value.toLocaleDateString()}</Text>
+                <Text style={styles.dateText}>{formatKoreanDate(value)}</Text>
             </Pressable>
             {visible && (
                 <Modal transparent animationType="fade">
@@ -56,6 +63,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                                 display={display}
                                 onChange={handleChange}
                                 style={styles.picker}
+                                locale="ko-KR"
                             />
                             <View style={styles.buttons}>
                                 <TouchableOpacity
