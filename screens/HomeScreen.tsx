@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, Image } from 'react-native'
+import { Text, TouchableOpacity, View, Image, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -21,7 +21,10 @@ export default function HomeScreen() {
 
     const bannerAdUnitId = __DEV__
         ? TestIds.BANNER
-        : 'ca-app-pub-2229465145229904/3161806144'
+        : Platform.select({
+              ios: 'ca-app-pub-2229465145229904/3161806144',
+              android: 'ca-app-pub-2229465145229904/3185856876',
+          }) || ''
 
     useFocusEffect(
         useCallback(() => {
