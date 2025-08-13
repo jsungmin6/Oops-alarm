@@ -102,7 +102,8 @@ export default function HomeScreen() {
                 style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    marginHorizontal: 24,
+                    // Match tighter list spacing
+                    marginHorizontal: 16,
                 }}
             >
                 <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>

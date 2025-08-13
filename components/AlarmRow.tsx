@@ -52,7 +52,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
     const isDue = remainingDays === 0
     const progressColor = isDue ? '#FFD700' : '#4caf50'
-    const backgroundColor = isDue ? '#fffde7' : '#f0fff4'
+    // Use a lighter fill so the cards feel less heavy while keeping text readable
+    const backgroundColor = isDue ? '#fffef4' : '#f7fff9'
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -171,7 +172,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             borderRadius={7}
                             color={progressColor}
                             borderColor={progressColor}
-                            unfilledColor="#e0f2f1"
+                            unfilledColor="#f0f5f4"
                             style={styles.progress}
                         />
                         {isDue && (
@@ -265,10 +266,16 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     actionsContainer: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
         height: '100%',
         overflow: 'hidden',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
+        // Fill behind actions so no background peeks through when swiping
+        backgroundColor: '#388E3C',
     },
     action: {
         position: 'absolute',
