@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Jua-Regular',
         marginRight: 8,
         flexShrink: 1,
+        fontFamily: 'Jua-Regular',
     },
     actions: {
         flexDirection: 'row',
