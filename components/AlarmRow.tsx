@@ -44,7 +44,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const swipeableRef = useRef<Swipeable | null>(null)
 
     const isDue = remainingDays === 0
-    const progressColor = '#4caf50'
+    const progressColor = isDue ? '#FFD700' : '#4caf50'
     const backgroundColor = '#f0fff4'
     const borderColor = '#A5D6A7'
 
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: '#f44336',
+        backgroundColor: '#ff6347',
         marginLeft: 4,
     },
     refreshButtonText: {
@@ -211,8 +211,8 @@ const styles = StyleSheet.create({
     actionsContainer: {
         height: '100%',
         overflow: 'hidden',
-        borderTopRightRadius: 16,
-        borderBottomRightRadius: 16,
+        borderTopRightRadius: 8,
+        borderBottomRightRadius: 8,
         flexDirection: 'row',
     },
     action: {
