@@ -9,6 +9,7 @@ import {
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
+import { t, dateLocale } from '../i18n'
 
 type Props = {
     alarm: Alarm
@@ -35,10 +36,11 @@ const calculateProgress = (createdAt: string, interval: number) => {
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}/${month}/${day}`
+    return new Intl.DateTimeFormat(dateLocale, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(date)
 }
 
 const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
@@ -113,13 +115,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 onPress={() => onEdit(alarm, editRef.current, swipeableRef.current)}
                 style={[styles.action, styles.editAction, { width: ACTION_WIDTH }]}
             >
-                <Text style={styles.actionLabel}>수정</Text>
+                <Text style={styles.actionLabel}>{t('edit')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => deleteAlarm(alarm.id)}
                 style={[styles.action, styles.deleteAction, { width: ACTION_WIDTH }]}
             >
-                <Text style={styles.actionLabel}>삭제</Text>
+                <Text style={styles.actionLabel}>{t('delete')}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -157,7 +159,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                                 ]}
                             >
                                 <View style={styles.refreshButtonContent}>
-                                    <Text style={styles.refreshButtonText}>갱신</Text>
+                                    <Text style={styles.refreshButtonText}>{t('refresh')}</Text>
                                     {isDue && <View style={styles.redDot} />}
                                 </View>
                             </TouchableOpacity>
@@ -244,10 +246,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     </View>
                     <View style={styles.footer}>
                         <Text style={styles.subText}>
-                            시작일: {formatDate(alarm.createdAt)}
+                            {t('startDateLabel')} {formatDate(alarm.createdAt)}
                         </Text>
                         <Text style={styles.subText}>
-                            남은 일수: {remainingDays}일
+                            {t('remainingDays')} {remainingDays}{t('days')}
                         </Text>
                     </View>
                 </View>

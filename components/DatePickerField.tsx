@@ -11,13 +11,14 @@ import {
     ViewStyle,
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { t, dateLocale } from '../i18n'
 
-const formatKoreanDate = (date: Date) => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}/${month}/${day}`
-}
+const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat(dateLocale, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(date)
 
 interface Props {
     value: Date
@@ -51,7 +52,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
     return (
         <>
             <Pressable onPress={open} style={style}>
-                <Text style={styles.dateText}>{formatKoreanDate(value)}</Text>
+                <Text style={styles.dateText}>{formatDate(value)}</Text>
             </Pressable>
             {visible && (
                 <Modal transparent animationType="fade">
@@ -63,20 +64,20 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                                 display={display}
                                 onChange={handleChange}
                                 style={styles.picker}
-                                locale="ko-KR"
+                                locale={dateLocale}
                             />
                             <View style={styles.buttons}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.cancel]}
                                     onPress={() => setVisible(false)}
                                 >
-                                    <Text style={styles.buttonText}>취소</Text>
+                                    <Text style={styles.buttonText}>{t('cancel')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button, styles.confirm]}
                                     onPress={confirm}
                                 >
-                                    <Text style={styles.buttonText}>확인</Text>
+                                    <Text style={styles.buttonText}>{t('confirm')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

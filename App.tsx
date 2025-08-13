@@ -17,11 +17,12 @@ export default function App() {
     return null
   }
 
-  if (Text.defaultProps == null) {
-    Text.defaultProps = {}
+  const TextComponent = Text as any
+  if (TextComponent.defaultProps == null) {
+    TextComponent.defaultProps = {}
   }
-  Text.defaultProps.style = {
-    ...(Text.defaultProps.style || {}),
+  TextComponent.defaultProps.style = {
+    ...(TextComponent.defaultProps.style || {}),
     fontFamily: 'Jua-Regular',
   }
 
