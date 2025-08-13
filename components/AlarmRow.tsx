@@ -11,6 +11,10 @@ import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
 
+const THEME_COLOR = '#4caf50'
+const BACKGROUND_COLOR = '#f0fff4'
+const BORDER_COLOR = '#a5d6a7'
+
 type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
@@ -51,10 +55,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const swipeableRef = useRef<Swipeable | null>(null)
 
     const isDue = remainingDays === 0
-    const progressColor = isDue ? '#FFD700' : '#4caf50'
-    const backgroundColor = isDue ? '#fffde7' : '#f0fff4'
 
-    const ACTION_WIDTH = 80
+    const ACTION_WIDTH = 64
     const TOTAL_WIDTH = ACTION_WIDTH * 2
 
     const renderRightActions = (
@@ -84,14 +86,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 ]}
             >
                 <Animated.View
-                    style={[
-                        styles.action,
-                        styles.editAction,
-                        {
-                            width: actionWidth,
-                            left: 0,
-                        },
-                    ]}
+                    style={[styles.action, styles.editAction, { width: actionWidth }]}
                 >
                     <TouchableOpacity
                         ref={editRef}
@@ -104,14 +99,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     </TouchableOpacity>
                 </Animated.View>
                 <Animated.View
-                    style={[
-                        styles.action,
-                        styles.deleteAction,
-                        {
-                            width: actionWidth,
-                            left: actionWidth,
-                        },
-                    ]}
+                    style={[styles.action, styles.deleteAction, { width: actionWidth }]}
                 >
                     <TouchableOpacity
                         onPress={() => deleteAlarm(alarm.id)}
@@ -128,7 +116,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
         <View
             style={[
                 styles.wrapper,
-                { borderColor: progressColor, backgroundColor },
+                { borderColor: BORDER_COLOR, backgroundColor: BACKGROUND_COLOR },
             ]}
         >
             <Swipeable
@@ -139,7 +127,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                 rightThreshold={40}
                 useNativeAnimations={false}
             >
-                <View style={[styles.container, { backgroundColor }]}>
+                <View style={[styles.container, { backgroundColor: BACKGROUND_COLOR }]}>
                     <View style={styles.header}>
                         <Text
                             style={styles.title}
@@ -153,7 +141,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                                 onPress={() => updateAlarmDate(alarm.id)}
                                 style={[
                                     styles.refreshButton,
-                                    { backgroundColor: progressColor },
+                                    { backgroundColor: THEME_COLOR },
                                 ]}
                             >
                                 <View style={styles.refreshButtonContent}>
@@ -169,8 +157,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             width={null}
                             height={14}
                             borderRadius={7}
-                            color={progressColor}
-                            borderColor={progressColor}
+                            color={THEME_COLOR}
+                            borderColor={THEME_COLOR}
                             unfilledColor="#e0f2f1"
                             style={styles.progress}
                         />
@@ -267,13 +255,12 @@ const styles = StyleSheet.create({
     actionsContainer: {
         height: '100%',
         overflow: 'hidden',
+        flexDirection: 'row',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
     },
     action: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
+        height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
