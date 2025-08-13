@@ -192,10 +192,10 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 const styles = StyleSheet.create({
     wrapper: {
         marginVertical: 4,
-        borderRadius: 16,
-        overflow: 'hidden',
         backgroundColor: '#fff',
-        borderWidth: 2,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#cccccc',
     },
     container: {
         backgroundColor: '#fff',
@@ -263,8 +263,6 @@ const styles = StyleSheet.create({
     actionsContainer: {
         height: '100%',
         overflow: 'hidden',
-        borderTopRightRadius: 16,
-        borderBottomRightRadius: 16,
     },
     action: {
         position: 'absolute',
