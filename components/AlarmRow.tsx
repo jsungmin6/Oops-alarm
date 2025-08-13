@@ -1,5 +1,12 @@
-import React, { useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import React, { useRef, useEffect } from 'react'
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    Animated,
+} from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
@@ -49,6 +56,31 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const borderColor = '#A5D6A7'
 
     const ACTION_WIDTH = 60
+
+    const glowAnim = useRef(new Animated.Value(0)).current
+
+    useEffect(() => {
+        if (isDue) {
+            const loop = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(glowAnim, {
+                        toValue: 1,
+                        duration: 1200,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(glowAnim, {
+                        toValue: 0,
+                        duration: 1200,
+                        useNativeDriver: true,
+                    }),
+                ])
+            )
+            loop.start()
+            return () => loop.stop()
+        } else {
+            glowAnim.setValue(0)
+        }
+    }, [isDue, glowAnim])
 
     const renderRightActions = () => (
         <View style={[styles.actionsContainer, { width: ACTION_WIDTH * 2 }]}>
@@ -119,10 +151,25 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                             style={styles.progress}
                         />
                         {isDue && (
-                            <Image
-                                source={require('../assets/alarm.png')}
-                                style={styles.progressIcon}
-                            />
+                            <>
+                                <Animated.View
+                                    pointerEvents="none"
+                                    style={[
+                                        styles.glowOverlay,
+                                        {
+                                            opacity: glowAnim.interpolate({
+                                                inputRange: [0, 1],
+                                                outputRange: [0, 0.6],
+                                            }),
+                                            backgroundColor: progressColor,
+                                        },
+                                    ]}
+                                />
+                                <Image
+                                    source={require('../assets/alarm.png')}
+                                    style={styles.progressIcon}
+                                />
+                            </>
                         )}
                     </View>
                     <View style={styles.footer}>
@@ -190,6 +237,19 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     progress: {},
+    glowOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius: 7,
+        shadowColor: '#FFD700',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.9,
+        shadowRadius: 6,
+        elevation: 4,
+    },
     progressIcon: {
         position: 'absolute',
         right: -16,
