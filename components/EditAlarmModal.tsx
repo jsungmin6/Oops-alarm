@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     input: {
+        fontFamily: 'Jua-Regular',
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
