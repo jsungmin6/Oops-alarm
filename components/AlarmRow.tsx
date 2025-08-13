@@ -124,7 +124,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     }
 
     return (
-        <View style={[styles.wrapper, { borderColor: progressColor }]}>
+        <View style={styles.wrapper}>
             <Swipeable
                 ref={swipeableRef}
                 renderRightActions={renderRightActions}
@@ -192,10 +192,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 const styles = StyleSheet.create({
     wrapper: {
         marginVertical: 4,
-        borderRadius: 16,
         overflow: 'hidden',
         backgroundColor: '#fff',
-        borderWidth: 2,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        borderColor: '#ccc',
     },
     container: {
         backgroundColor: '#fff',
@@ -263,8 +266,6 @@ const styles = StyleSheet.create({
     actionsContainer: {
         height: '100%',
         overflow: 'hidden',
-        borderTopRightRadius: 16,
-        borderBottomRightRadius: 16,
     },
     action: {
         position: 'absolute',
