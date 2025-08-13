@@ -22,6 +22,11 @@ export default function DatePickerField({ value, onChange, style }: Props) {
     const [visible, setVisible] = useState(false)
     const [temp, setTemp] = useState(value)
 
+    const display =
+        Platform.OS === 'ios'
+            ? (parseInt(String(Platform.Version), 10) >= 14 ? 'inline' : 'spinner')
+            : 'calendar'
+
     const open = () => {
         setTemp(value)
         setVisible(true)
@@ -48,7 +53,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                             <DateTimePicker
                                 value={temp}
                                 mode="date"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                                display={display}
                                 onChange={handleChange}
                                 style={styles.picker}
                             />
