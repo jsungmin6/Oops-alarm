@@ -16,16 +16,19 @@ export default function App() {
 
   useEffect(() => {
     if (fontsLoaded) {
-      Text.defaultProps = Text.defaultProps || {}
-      Text.defaultProps.style = [
+      const defaultText = Text as any
+      const defaultTextInput = TextInput as any
+
+      defaultText.defaultProps = defaultText.defaultProps || {}
+      defaultText.defaultProps.style = [
         { fontFamily: 'Jua-Regular' },
-        Text.defaultProps.style,
+        defaultText.defaultProps.style,
       ]
 
-      TextInput.defaultProps = TextInput.defaultProps || {}
-      TextInput.defaultProps.style = [
+      defaultTextInput.defaultProps = defaultTextInput.defaultProps || {}
+      defaultTextInput.defaultProps.style = [
         { fontFamily: 'Jua-Regular' },
-        TextInput.defaultProps.style,
+        defaultTextInput.defaultProps.style,
       ]
     }
   }, [fontsLoaded])
