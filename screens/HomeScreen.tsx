@@ -96,7 +96,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView
-            style={{ flex: 1, backgroundColor: '#f0fff4', paddingTop: 24 }}
+            style={{ flex: 1, backgroundColor: '#fff', paddingTop: 24 }}
         >
             <View
                 style={{
