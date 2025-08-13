@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useFonts } from 'expo-font'
+import { useEffect } from 'react'
+import mobileAds from 'react-native-google-mobile-ads'
 import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
 
@@ -12,6 +14,10 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'Jua-Regular': require('./assets/fonts/Jua-Regular.ttf'),
   })
+
+  useEffect(() => {
+    void mobileAds().initialize()
+  }, [])
 
   if (!fontsLoaded) {
     return null

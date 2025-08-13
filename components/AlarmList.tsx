@@ -3,6 +3,7 @@ import { FlatList, StyleSheet } from 'react-native'
 import AlarmRow from './AlarmRow'
 import { Alarm } from '../types/Alarm'
 import { Swipeable } from 'react-native-gesture-handler'
+import AdBanner from './AdBanner'
 
 type Props = {
     alarms: Alarm[]
@@ -57,6 +58,7 @@ const AlarmList = ({
             )}
             contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<AdBanner />}
             ListFooterComponent={footer}
         />
     )
