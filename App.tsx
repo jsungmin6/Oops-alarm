@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#fff' }}>
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
