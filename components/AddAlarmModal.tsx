@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'center',
     },
@@ -191,7 +190,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontWeight: 'bold',
     },
 })
 
