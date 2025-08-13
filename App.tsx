@@ -1,7 +1,8 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Text, TextInput } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useEffect } from 'react'
 import { useFonts } from 'expo-font'
 import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
@@ -12,6 +13,18 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'Jua-Regular': require('./assets/fonts/Jua-Regular.ttf'),
   })
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      Text.defaultProps = Text.defaultProps || {}
+      Text.defaultProps.style = [Text.defaultProps.style, { fontFamily: 'Jua-Regular' }]
+      TextInput.defaultProps = TextInput.defaultProps || {}
+      TextInput.defaultProps.style = [
+        TextInput.defaultProps.style,
+        { fontFamily: 'Jua-Regular' },
+      ]
+    }
+  }, [fontsLoaded])
 
   if (!fontsLoaded) {
     return null
