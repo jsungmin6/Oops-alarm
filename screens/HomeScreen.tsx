@@ -105,7 +105,11 @@ export default function HomeScreen() {
                     marginHorizontal: 24,
                 }}
             >
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>내 알람</Text>
+                <Text
+                    style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
+                >
+                    내 알람
+                </Text>
                 <Image
                     source={require('../assets/alarm_smile.png')}
                     style={{ width: 40, height: 40, marginLeft: 8 }}
@@ -147,6 +151,7 @@ export default function HomeScreen() {
                                 fontSize: 32,
                                 color: 'white',
                                 fontWeight: 'bold',
+                                fontFamily: 'Jua-Regular',
                             }}
                         >
                             +

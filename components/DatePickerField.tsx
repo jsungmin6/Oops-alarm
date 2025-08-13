@@ -44,7 +44,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
     return (
         <>
             <Pressable onPress={open} style={style}>
-                <Text>{value.toLocaleDateString()}</Text>
+                <Text style={styles.dateText}>{value.toLocaleDateString()}</Text>
             </Pressable>
             {visible && (
                 <Modal transparent animationType="fade">
@@ -62,13 +62,13 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                                     style={[styles.button, styles.cancel]}
                                     onPress={() => setVisible(false)}
                                 >
-                                    <Text>취소</Text>
+                                    <Text style={styles.buttonText}>취소</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button, styles.confirm]}
                                     onPress={confirm}
                                 >
-                                    <Text>확인</Text>
+                                    <Text style={styles.buttonText}>확인</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -113,5 +113,11 @@ const styles = StyleSheet.create({
     },
     confirm: {
         backgroundColor: '#ddd',
+    },
+    dateText: {
+        fontFamily: 'Jua-Regular',
+    },
+    buttonText: {
+        fontFamily: 'Jua-Regular',
     },
 })

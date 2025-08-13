@@ -170,10 +170,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'center',
+        fontFamily: 'Jua-Regular',
     },
     label: {
         fontSize: 16,
         marginTop: 12,
+        fontFamily: 'Jua-Regular',
     },
     input: {
         fontFamily: 'Jua-Regular',
@@ -187,6 +189,7 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 4,
         fontSize: 12,
+        fontFamily: 'Jua-Regular',
     },
     buttons: {
         flexDirection: 'row',
@@ -212,6 +215,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
+        fontFamily: 'Jua-Regular',
     },
 })
 
