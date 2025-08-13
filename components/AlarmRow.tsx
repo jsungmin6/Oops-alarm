@@ -1,15 +1,10 @@
 import React, { useRef } from 'react'
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    Animated,
-    Image,
-} from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
+
+const ACTION_WIDTH = 80
 
 type Props = {
     alarm: Alarm
@@ -54,75 +49,23 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const progressColor = isDue ? '#FFD700' : '#4caf50'
     const backgroundColor = isDue ? '#fffde7' : '#f0fff4'
 
-    const ACTION_WIDTH = 80
-    const TOTAL_WIDTH = ACTION_WIDTH * 2
-
-    const renderRightActions = (
-        swipeProgress: Animated.AnimatedInterpolation<number>,
-        dragX: Animated.AnimatedInterpolation<number>
-    ) => {
-        const translateX = dragX.interpolate({
-            inputRange: [-TOTAL_WIDTH, 0],
-            outputRange: [0, TOTAL_WIDTH],
-            extrapolate: 'clamp',
-        })
-
-        const actionWidth = swipeProgress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, ACTION_WIDTH],
-            extrapolate: 'clamp',
-        })
-
-        return (
-            <Animated.View
-                style={[
-                    styles.actionsContainer,
-                    {
-                        width: TOTAL_WIDTH,
-                        transform: [{ translateX }],
-                    },
-                ]}
+    const renderRightActions = (_progress: any, _dragX: any) => (
+        <View style={styles.actionsContainer}>
+            <TouchableOpacity
+                ref={editRef}
+                onPress={() => onEdit(alarm, editRef.current, swipeableRef.current)}
+                style={[styles.action, styles.editAction]}
             >
-                <Animated.View
-                    style={[
-                        styles.action,
-                        styles.editAction,
-                        {
-                            width: actionWidth,
-                            left: 0,
-                        },
-                    ]}
-                >
-                    <TouchableOpacity
-                        ref={editRef}
-                        onPress={() =>
-                            onEdit(alarm, editRef.current, swipeableRef.current)
-                        }
-                        style={styles.actionButton}
-                    >
-                        <Text style={styles.actionLabel}>수정</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-                <Animated.View
-                    style={[
-                        styles.action,
-                        styles.deleteAction,
-                        {
-                            width: actionWidth,
-                            left: actionWidth,
-                        },
-                    ]}
-                >
-                    <TouchableOpacity
-                        onPress={() => deleteAlarm(alarm.id)}
-                        style={styles.actionButton}
-                    >
-                        <Text style={styles.actionLabel}>삭제</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-            </Animated.View>
-        )
-    }
+                <Text style={styles.actionLabel}>수정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => deleteAlarm(alarm.id)}
+                style={[styles.action, styles.deleteAction]}
+            >
+                <Text style={styles.actionLabel}>삭제</Text>
+            </TouchableOpacity>
+        </View>
+    )
 
     return (
         <View
@@ -266,14 +209,15 @@ const styles = StyleSheet.create({
     },
     actionsContainer: {
         height: '100%',
+        width: ACTION_WIDTH * 2,
+        flexDirection: 'row',
         overflow: 'hidden',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
     },
     action: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
+        width: ACTION_WIDTH,
+        height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -282,11 +226,6 @@ const styles = StyleSheet.create({
     },
     deleteAction: {
         backgroundColor: '#388E3C',
-    },
-    actionButton: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     actionLabel: {
         color: '#ffffff',
