@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Text, TextInput } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -15,6 +15,16 @@ export default function App() {
 
   if (!fontsLoaded) {
     return null
+  }
+
+  ;(Text as any).defaultProps = {
+    ...(Text as any).defaultProps,
+    style: [{ fontFamily: 'Jua-Regular' }, (Text as any).defaultProps?.style],
+  }
+
+  ;(TextInput as any).defaultProps = {
+    ...(TextInput as any).defaultProps,
+    style: [{ fontFamily: 'Jua-Regular' }, (TextInput as any).defaultProps?.style],
   }
 
   return (
