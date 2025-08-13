@@ -8,6 +8,7 @@ import { useState, useCallback, useRef } from 'react'
 import AddAlarmModal from '../components/AddAlarmModal'
 import EditAlarmModal from '../components/EditAlarmModal'
 import { Swipeable } from 'react-native-gesture-handler'
+import { t } from '../i18n'
 
 export default function HomeScreen() {
     const [alarms, setAlarms] = useState<Alarm[]>([])
@@ -108,7 +109,7 @@ export default function HomeScreen() {
                 <Text
                     style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
                 >
-                    내 알람
+                    {t('myAlarms')}
                 </Text>
                 <Image
                     source={require('../assets/alarm_smile.png')}

@@ -11,6 +11,7 @@ import {
     Platform,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { t } from '../i18n'
 
 interface Props {
     visible: boolean
@@ -37,7 +38,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
     const onChangeName = (text: string) => {
         setName(text)
         const trimmed = text.trim()
-        setNameError(trimmed ? '' : '알람 제목을 입력해 주세요.')
+        setNameError(trimmed ? '' : t('nameError'))
     }
 
     const onChangeInterval = (text: string) => {
@@ -45,7 +46,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
         const parsed = parseInt(text, 10)
         setIntervalError(
             text.trim().length === 0 || isNaN(parsed) || parsed < 1
-                ? '주기는 1 이상의 숫자여야 합니다.'
+                ? t('intervalError')
                 : ''
         )
     }
@@ -76,27 +77,27 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
                 style={styles.overlay}
             >
                 <SafeAreaView style={styles.container}>
-                    <Text style={styles.title}>알람 등록</Text>
-                    <Text style={styles.label}>알람 제목</Text>
+                    <Text style={styles.title}>{t('addAlarm')}</Text>
+                    <Text style={styles.label}>{t('alarmTitle')}</Text>
                     <TextInput
                         style={styles.input}
                         value={name}
                         onChangeText={onChangeName}
                         maxLength={50}
-                        placeholder="예: 칫솔 교체"
+                        placeholder={t('alarmTitlePlaceholder')}
                         autoFocus
                     />
                     {nameError ? (
                         <Text style={styles.error}>{nameError}</Text>
                     ) : null}
 
-                    <Text style={styles.label}>주기 (일)</Text>
+                    <Text style={styles.label}>{t('interval')}</Text>
                     <TextInput
                         style={styles.input}
                         value={interval}
                         onChangeText={onChangeInterval}
                         keyboardType="number-pad"
-                        placeholder="예: 30"
+                        placeholder={t('intervalPlaceholder')}
                     />
                     {intervalError ? (
                         <Text style={styles.error}>{intervalError}</Text>
@@ -108,7 +109,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
                             onPress={onClose}
                             disabled={saving}
                         >
-                            <Text style={styles.buttonText}>취소</Text>
+                            <Text style={styles.buttonText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -122,7 +123,7 @@ export default function AddAlarmModal({ visible, onClose, onSubmit }: Props) {
                             {saving ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.buttonText}>등록</Text>
+                                <Text style={styles.buttonText}>{t('add')}</Text>
                             )}
                         </TouchableOpacity>
                     </View>

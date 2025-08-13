@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DatePickerField from './DatePickerField'
 import { Alarm } from '../types/Alarm'
+import { t } from '../i18n'
 
 interface Props {
     visible: boolean
@@ -53,7 +54,7 @@ export default function EditAlarmModal({
     const onChangeName = (text: string) => {
         setName(text)
         const trimmed = text.trim()
-        setNameError(trimmed ? '' : '알람 제목을 입력해 주세요.')
+        setNameError(trimmed ? '' : t('nameError'))
     }
 
     const onChangeInterval = (text: string) => {
@@ -61,7 +62,7 @@ export default function EditAlarmModal({
         const parsed = parseInt(text, 10)
         setIntervalError(
             text.trim().length === 0 || isNaN(parsed) || parsed < 1
-                ? '주기는 1 이상의 숫자여야 합니다.'
+                ? t('intervalError')
                 : ''
         )
     }
@@ -92,8 +93,8 @@ export default function EditAlarmModal({
                 style={styles.overlay}
             >
                 <SafeAreaView style={styles.container}>
-                    <Text style={styles.title}>알람 수정</Text>
-                    <Text style={styles.label}>알람 제목</Text>
+                    <Text style={styles.title}>{t('editAlarm')}</Text>
+                    <Text style={styles.label}>{t('alarmTitle')}</Text>
                     <TextInput
                         style={styles.input}
                         value={name}
@@ -103,14 +104,14 @@ export default function EditAlarmModal({
                     />
                     {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
 
-                    <Text style={styles.label}>시작일</Text>
+                    <Text style={styles.label}>{t('startDate')}</Text>
                     <DatePickerField
                         value={startDate}
                         onChange={setStartDate}
                         style={styles.input}
                     />
 
-                    <Text style={styles.label}>주기 (일)</Text>
+                    <Text style={styles.label}>{t('interval')}</Text>
                     <TextInput
                         style={styles.input}
                         value={interval}
@@ -127,7 +128,7 @@ export default function EditAlarmModal({
                             onPress={onClose}
                             disabled={saving}
                         >
-                            <Text style={styles.buttonText}>취소</Text>
+                            <Text style={styles.buttonText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -141,7 +142,7 @@ export default function EditAlarmModal({
                             {saving ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.buttonText}>저장</Text>
+                                <Text style={styles.buttonText}>{t('save')}</Text>
                             )}
                         </TouchableOpacity>
                     </View>
