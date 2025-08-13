@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, Image } from 'react-native'
+import { Text, TouchableOpacity, View, Image, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -9,6 +9,7 @@ import AddAlarmModal from '../components/AddAlarmModal'
 import EditAlarmModal from '../components/EditAlarmModal'
 import { Swipeable } from 'react-native-gesture-handler'
 import { t } from '../i18n'
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads'
 
 export default function HomeScreen() {
     const [alarms, setAlarms] = useState<Alarm[]>([])
@@ -17,6 +18,13 @@ export default function HomeScreen() {
     const [editingAlarm, setEditingAlarm] = useState<Alarm | null>(null)
     const editButtonRef = useRef<any>(null)
     const editingSwipeRef = useRef<Swipeable | null>(null)
+
+    const bannerAdUnitId = __DEV__
+        ? TestIds.BANNER
+        : Platform.select({
+              ios: 'ca-app-pub-2229465145229904/3161806144',
+              android: 'ca-app-pub-2229465145229904/3185856876',
+          }) || ''
 
     useFocusEffect(
         useCallback(() => {
@@ -126,6 +134,14 @@ export default function HomeScreen() {
                     editingSwipeRef.current = swipeRef
                     setEditingAlarm(alarm)
                 }}
+                header={
+                    <View style={{ alignItems: 'center', marginBottom: 8 }}>
+                        <BannerAd
+                            unitId={bannerAdUnitId}
+                            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                        />
+                    </View>
+                }
                 footer={
                     <TouchableOpacity
                         ref={addButtonRef}

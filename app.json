@@ -26,7 +26,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "iosAppId": "ca-app-pub-2229465145229904~3323224724",
+          "androidAppId": "ca-app-pub-2229465145229904~9005159766"
+        }
+      ]
     ]
   }
 }
