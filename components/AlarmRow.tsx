@@ -58,15 +58,8 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const TOTAL_WIDTH = ACTION_WIDTH * 2
 
     const renderRightActions = (
-        swipeProgress: Animated.AnimatedInterpolation<number>,
-        dragX: Animated.AnimatedInterpolation<number>
+        swipeProgress: Animated.AnimatedInterpolation<number>
     ) => {
-        const translateX = dragX.interpolate({
-            inputRange: [-TOTAL_WIDTH, 0],
-            outputRange: [0, TOTAL_WIDTH],
-            extrapolate: 'clamp',
-        })
-
         const actionWidth = swipeProgress.interpolate({
             inputRange: [0, 1],
             outputRange: [0, ACTION_WIDTH],
@@ -79,7 +72,6 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     styles.actionsContainer,
                     {
                         width: TOTAL_WIDTH,
-                        transform: [{ translateX }],
                     },
                 ]}
             >
@@ -89,7 +81,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         styles.editAction,
                         {
                             width: actionWidth,
-                            left: 0,
+                            right: 0,
                         },
                     ]}
                 >
@@ -109,7 +101,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         styles.deleteAction,
                         {
                             width: actionWidth,
-                            left: actionWidth,
+                            right: actionWidth,
                         },
                     ]}
                 >
@@ -265,7 +257,10 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     actionsContainer: {
-        height: '100%',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
         overflow: 'hidden',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
