@@ -52,7 +52,7 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
 
     const isDue = remainingDays === 0
     const progressColor = isDue ? '#FFD700' : '#4caf50'
-    const backgroundColor = isDue ? '#fffde7' : '#f0fff4'
+    const backgroundColor = isDue ? '#fffef2' : '#f7fffa'
 
     const ACTION_WIDTH = 80
     const TOTAL_WIDTH = ACTION_WIDTH * 2
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     container: {
-        padding: 12,
+        padding: 10,
     },
     header: {
         flexDirection: 'row',
@@ -265,10 +265,15 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     actionsContainer: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
         height: '100%',
         overflow: 'hidden',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
+        backgroundColor: '#388E3C',
     },
     action: {
         position: 'absolute',
