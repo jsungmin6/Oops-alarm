@@ -1,10 +1,9 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import {
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
-    Image,
     Animated,
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
@@ -58,10 +57,13 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
     const ACTION_WIDTH = 60
 
     const glowAnim = useRef(new Animated.Value(0)).current
+    const shimmerAnim = useRef(new Animated.Value(0)).current
+    const spinAnim = useRef(new Animated.Value(0)).current
+    const [barWidth, setBarWidth] = useState(0)
 
     useEffect(() => {
         if (isDue) {
-            const loop = Animated.loop(
+            const glowLoop = Animated.loop(
                 Animated.sequence([
                     Animated.timing(glowAnim, {
                         toValue: 1,
@@ -75,12 +77,34 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                     }),
                 ])
             )
-            loop.start()
-            return () => loop.stop()
+            const shimmerLoop = Animated.loop(
+                Animated.timing(shimmerAnim, {
+                    toValue: 1,
+                    duration: 1500,
+                    useNativeDriver: true,
+                })
+            )
+            const spinLoop = Animated.loop(
+                Animated.timing(spinAnim, {
+                    toValue: 1,
+                    duration: 2000,
+                    useNativeDriver: true,
+                })
+            )
+            glowLoop.start()
+            shimmerLoop.start()
+            spinLoop.start()
+            return () => {
+                glowLoop.stop()
+                shimmerLoop.stop()
+                spinLoop.stop()
+            }
         } else {
             glowAnim.setValue(0)
+            shimmerAnim.setValue(0)
+            spinAnim.setValue(0)
         }
-    }, [isDue, glowAnim])
+    }, [isDue, glowAnim, shimmerAnim, spinAnim])
 
     const renderRightActions = () => (
         <View style={[styles.actionsContainer, { width: ACTION_WIDTH * 2 }]}>
@@ -140,36 +164,82 @@ const AlarmRow = ({ alarm, deleteAlarm, updateAlarmDate, onEdit }: Props) => {
                         </View>
                     </View>
                     <View style={styles.progressContainer}>
-                        <Progress.Bar
-                            progress={progress}
-                            width={null}
-                            height={14}
-                            borderRadius={7}
-                            color={progressColor}
-                            borderColor={progressColor}
-                            unfilledColor="#e0f2f1"
-                            style={styles.progress}
-                        />
+                        <View
+                            style={styles.progressBarWrapper}
+                            onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}
+                        >
+                            <Progress.Bar
+                                progress={progress}
+                                width={null}
+                                height={14}
+                                borderRadius={7}
+                                color={progressColor}
+                                borderColor={progressColor}
+                                unfilledColor="#e0f2f1"
+                                style={styles.progress}
+                            />
+                            {isDue && (
+                                <>
+                                    <Animated.View
+                                        pointerEvents="none"
+                                        style={[
+                                            styles.glowOverlay,
+                                            {
+                                                opacity: glowAnim.interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: [0.3, 0.9],
+                                                }),
+                                                transform: [
+                                                    {
+                                                        scale: glowAnim.interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: [1, 1.2],
+                                                        }),
+                                                    },
+                                                ],
+                                                backgroundColor: progressColor,
+                                            },
+                                        ]}
+                                    />
+                                    <Animated.View
+                                        pointerEvents="none"
+                                        style={[
+                                            styles.shimmerOverlay,
+                                            {
+                                                width: barWidth * 0.3,
+                                                transform: [
+                                                    {
+                                                        translateX: shimmerAnim.interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: [-barWidth, barWidth],
+                                                        }),
+                                                    },
+                                                    { rotate: '20deg' },
+                                                ],
+                                            },
+                                        ]}
+                                    />
+                                </>
+                            )}
+                        </View>
                         {isDue && (
-                            <>
-                                <Animated.View
-                                    pointerEvents="none"
-                                    style={[
-                                        styles.glowOverlay,
-                                        {
-                                            opacity: glowAnim.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: [0, 0.6],
-                                            }),
-                                            backgroundColor: progressColor,
-                                        },
-                                    ]}
-                                />
-                                <Image
-                                    source={require('../assets/alarm.png')}
-                                    style={styles.progressIcon}
-                                />
-                            </>
+                            <Animated.Image
+                                source={require('../assets/alarm.png')}
+                                style={[
+                                    styles.progressIcon,
+                                    {
+                                        transform: [
+                                            { translateY: -16 },
+                                            {
+                                                rotate: spinAnim.interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: ['0deg', '360deg'],
+                                                }),
+                                            },
+                                        ],
+                                    },
+                                ]}
+                            />
                         )}
                     </View>
                     <View style={styles.footer}>
@@ -236,6 +306,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         position: 'relative',
     },
+    progressBarWrapper: {
+        overflow: 'hidden',
+    },
     progress: {},
     glowOverlay: {
         position: 'absolute',
@@ -250,6 +323,13 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         elevation: 4,
     },
+    shimmerOverlay: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255,255,255,0.7)',
+        borderRadius: 7,
+    },
     progressIcon: {
         position: 'absolute',
         right: -16,
@@ -257,7 +337,6 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         resizeMode: 'contain',
-        transform: [{ translateY: -16 }],
     },
     footer: {
         flexDirection: 'row',
