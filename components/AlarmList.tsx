@@ -13,6 +13,7 @@ type Props = {
         triggerRef: any,
         swipeableRef: Swipeable | null
     ) => void
+    header?: React.ReactElement | null
     footer?: React.ReactElement | null
 }
 
@@ -21,6 +22,7 @@ const AlarmList = ({
     deleteAlarm,
     updateAlarmDate,
     onEdit,
+    header,
     footer,
 }: Props) => {
     const sortedAlarms = useMemo(() => {
@@ -57,6 +59,7 @@ const AlarmList = ({
             )}
             contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={header}
             ListFooterComponent={footer}
         />
     )
