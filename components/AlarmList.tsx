@@ -14,6 +14,7 @@ type Props = {
         swipeableRef: Swipeable | null
     ) => void
     footer?: React.ReactElement | null
+    currentTime: number
 }
 
 const AlarmList = ({
@@ -22,17 +23,16 @@ const AlarmList = ({
     updateAlarmDate,
     onEdit,
     footer,
+    currentTime,
 }: Props) => {
     const sortedAlarms = useMemo(() => {
-        const now = new Date()
+        const now = currentTime
         return [...alarms].sort((a, b) => {
             const diffA = Math.floor(
-                (now.getTime() - new Date(a.createdAt).getTime()) /
-                    (1000 * 60 * 60 * 24)
+                (now - new Date(a.createdAt).getTime()) / (1000 * 60 * 60 * 24)
             )
             const diffB = Math.floor(
-                (now.getTime() - new Date(b.createdAt).getTime()) /
-                    (1000 * 60 * 60 * 24)
+                (now - new Date(b.createdAt).getTime()) / (1000 * 60 * 60 * 24)
             )
             const remainingA = Math.max(a.interval - diffA, 0)
             const remainingB = Math.max(b.interval - diffB, 0)
@@ -41,7 +41,7 @@ const AlarmList = ({
             }
             return remainingA - remainingB
         })
-    }, [alarms])
+    }, [alarms, currentTime])
 
     return (
         <FlatList
@@ -53,6 +53,7 @@ const AlarmList = ({
                     deleteAlarm={deleteAlarm}
                     updateAlarmDate={updateAlarmDate}
                     onEdit={onEdit}
+                    currentTime={currentTime}
                 />
             )}
             contentContainerStyle={styles.container}

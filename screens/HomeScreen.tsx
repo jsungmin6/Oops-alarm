@@ -1,14 +1,20 @@
-import { Text, TouchableOpacity, View, Image } from 'react-native'
+import {
+    Text,
+    TouchableOpacity,
+    View,
+    Image,
+    AppState,
+    AppStateStatus,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import AddAlarmModal from '../components/AddAlarmModal'
 import EditAlarmModal from '../components/EditAlarmModal'
 import { Swipeable } from 'react-native-gesture-handler'
-import { t } from '../i18n'
 
 export default function HomeScreen() {
     const [alarms, setAlarms] = useState<Alarm[]>([])
@@ -17,17 +23,34 @@ export default function HomeScreen() {
     const [editingAlarm, setEditingAlarm] = useState<Alarm | null>(null)
     const editButtonRef = useRef<any>(null)
     const editingSwipeRef = useRef<Swipeable | null>(null)
+    const [currentTime, setCurrentTime] = useState(Date.now())
+
+    const loadAlarms = useCallback(async () => {
+        const json = await AsyncStorage.getItem('alarms')
+        const saved: Alarm[] = json ? JSON.parse(json) : []
+        setAlarms(saved)
+        setCurrentTime(Date.now())
+    }, [])
 
     useFocusEffect(
         useCallback(() => {
-            const loadAlarms = async () => {
-                const json = await AsyncStorage.getItem('alarms')
-                const saved: Alarm[] = json ? JSON.parse(json) : []
-                setAlarms(saved)
-            }
             void loadAlarms()
-        }, [])
+        }, [loadAlarms])
     )
+
+    useEffect(() => {
+        const handleAppStateChange = (nextState: AppStateStatus) => {
+            if (nextState === 'active') {
+                void loadAlarms()
+            }
+        }
+
+        const subscription = AppState.addEventListener('change', handleAppStateChange)
+
+        return () => {
+            subscription.remove()
+        }
+    }, [loadAlarms])
 
     const updateAlarmDate = async (id: string) => {
         const json = await AsyncStorage.getItem('alarms')
@@ -41,6 +64,7 @@ export default function HomeScreen() {
 
         await AsyncStorage.setItem('alarms', JSON.stringify(updated))
         setAlarms(updated)
+        setCurrentTime(Date.now())
     }
 
     const deleteAlarm = async (id: string) => {
@@ -51,6 +75,7 @@ export default function HomeScreen() {
 
         await AsyncStorage.setItem('alarms', JSON.stringify(filtered))
         setAlarms(filtered)
+        setCurrentTime(Date.now())
     }
 
     const createId = () =>
@@ -68,6 +93,7 @@ export default function HomeScreen() {
         current.push(newAlarm)
         await AsyncStorage.setItem('alarms', JSON.stringify(current))
         setAlarms(current)
+        setCurrentTime(Date.now())
     }
 
     const handleEdit = async (
@@ -92,6 +118,7 @@ export default function HomeScreen() {
         setAlarms(updated)
         editingSwipeRef.current?.close()
         editingSwipeRef.current = null
+        setCurrentTime(Date.now())
     }
 
 
@@ -109,7 +136,7 @@ export default function HomeScreen() {
                 <Text
                     style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
                 >
-                    {t('myAlarms')}
+                    내 알람
                 </Text>
                 <Image
                     source={require('../assets/alarm_smile.png')}
@@ -126,6 +153,7 @@ export default function HomeScreen() {
                     editingSwipeRef.current = swipeRef
                     setEditingAlarm(alarm)
                 }}
+                currentTime={currentTime}
                 footer={
                     <TouchableOpacity
                         ref={addButtonRef}

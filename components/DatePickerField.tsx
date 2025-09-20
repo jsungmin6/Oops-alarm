@@ -11,10 +11,9 @@ import {
     ViewStyle,
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { t, dateLocale } from '../i18n'
 
 const formatDate = (date: Date) =>
-    new Intl.DateTimeFormat(dateLocale, {
+    new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -64,20 +63,20 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                                 display={display}
                                 onChange={handleChange}
                                 style={styles.picker}
-                                locale={dateLocale}
+                                locale="ko-KR"
                             />
                             <View style={styles.buttons}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.cancel]}
                                     onPress={() => setVisible(false)}
                                 >
-                                    <Text style={styles.buttonText}>{t('cancel')}</Text>
+                                    <Text style={styles.buttonText}>취소</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button, styles.confirm]}
                                     onPress={confirm}
                                 >
-                                    <Text style={styles.buttonText}>{t('confirm')}</Text>
+                                    <Text style={styles.buttonText}>확인</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
