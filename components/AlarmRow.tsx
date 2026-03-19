@@ -14,6 +14,7 @@ type Props = {
     alarm: Alarm
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
+    testAlarmNotification: (alarm: Alarm) => void
     onEdit: (
         alarm: Alarm,
         triggerRef: any,
@@ -51,6 +52,7 @@ const AlarmRow = ({
     alarm,
     deleteAlarm,
     updateAlarmDate,
+    testAlarmNotification,
     onEdit,
     currentTime,
 }: Props) => {
@@ -164,6 +166,8 @@ const AlarmRow = ({
                         <View style={styles.actions}>
                             <TouchableOpacity
                                 onPress={() => updateAlarmDate(alarm.id)}
+                                onLongPress={() => testAlarmNotification(alarm)}
+                                delayLongPress={450}
                                 style={[
                                     styles.refreshButton,
                                     { backgroundColor: progressColor },
@@ -389,4 +393,3 @@ const styles = StyleSheet.create({
 })
 
 export default AlarmRow
-

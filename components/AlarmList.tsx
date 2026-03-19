@@ -8,6 +8,7 @@ type Props = {
     alarms: Alarm[]
     deleteAlarm: (id: string) => void
     updateAlarmDate: (id: string) => void
+    testAlarmNotification: (alarm: Alarm) => void
     onEdit: (
         alarm: Alarm,
         triggerRef: any,
@@ -22,6 +23,7 @@ const AlarmList = ({
     alarms,
     deleteAlarm,
     updateAlarmDate,
+    testAlarmNotification,
     onEdit,
     header,
     footer,
@@ -54,6 +56,7 @@ const AlarmList = ({
                     alarm={item}
                     deleteAlarm={deleteAlarm}
                     updateAlarmDate={updateAlarmDate}
+                    testAlarmNotification={testAlarmNotification}
                     onEdit={onEdit}
                     currentTime={currentTime}
                 />

@@ -25,19 +25,18 @@ export default function BannerAdSection() {
 
 const styles = StyleSheet.create({
     card: {
-        marginHorizontal: 16,
-        marginTop: 8,
-        marginBottom: 20,
-        padding: 8,
+        marginBottom: 14,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
         borderRadius: 16,
         backgroundColor: '#F8FFE8',
         borderColor: '#DCECC0',
-        borderWidth: 1,
+        borderWidth: 2,
     },
     badgeRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 6,
+        marginBottom: 8,
     },
     badge: {
         paddingHorizontal: 8,

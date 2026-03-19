@@ -6,10 +6,10 @@ import {
     Image,
     AppState,
     AppStateStatus,
+    Switch,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AlarmList from '../components/AlarmList'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alarm } from '../types/Alarm'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useCallback, useRef, useEffect } from 'react'
@@ -148,15 +148,16 @@ export default function HomeScreen() {
     const handleToggleNotifications = async () => {
         const nextValue = !notificationsEnabled
 
-        if (nextValue) {
-            await setAlarmNotificationsEnabledAsync(true)
-            const scheduled = await scheduleAlarmTestNotificationAsync(
-                alarms[0]?.name || 'Oops Alarm',
-                true
-            )
+        await setAlarmNotificationsEnabledAsync(nextValue)
 
-            if (!scheduled) {
-                await setAlarmNotificationsEnabledAsync(false)
+        await syncAlarmNotificationsAsync(alarms, {
+            enabled: nextValue,
+            requestPermissions: nextValue,
+        })
+
+        if (nextValue) {
+            const verifiedEnabled = await getAlarmNotificationsEnabledAsync()
+            if (!verifiedEnabled) {
                 setNotificationsEnabled(false)
                 Alert.alert(
                     t('common.confirm'),
@@ -164,26 +165,18 @@ export default function HomeScreen() {
                 )
                 return
             }
-        } else {
-            await setAlarmNotificationsEnabledAsync(false)
         }
 
-        await syncAlarmNotificationsAsync(alarms, {
-            enabled: nextValue,
-            requestPermissions: nextValue,
-        })
         setNotificationsEnabled(nextValue)
     }
 
-    const handleTestNotification = async () => {
-        const alarmName = alarms[0]?.name || 'Oops Alarm'
-
+    const handleTestNotification = async (alarm: Alarm) => {
         if (!notificationsEnabled) {
             Alert.alert(t('common.confirm'), t('notifications.alarmsOff'))
             return
         }
 
-        const scheduled = await scheduleAlarmTestNotificationAsync(alarmName, true)
+        const scheduled = await scheduleAlarmTestNotificationAsync(alarm.name, true)
         if (!scheduled) {
             Alert.alert(t('common.confirm'), t('notifications.permissionsDenied'))
             return
@@ -191,7 +184,7 @@ export default function HomeScreen() {
 
         Alert.alert(
             t('notifications.testScheduledTitle'),
-            t('notifications.testScheduledBody', { name: alarmName })
+            t('notifications.testScheduledBody', { name: alarm.name })
         )
     }
 
@@ -203,104 +196,65 @@ export default function HomeScreen() {
                 style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    marginHorizontal: 24,
-                }}
-            >
-                <Text
-                    style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
-                >
-                    {t('home.title')}
-                </Text>
-                <Image
-                    source={require('../assets/alarm_smile.png')}
-                    style={{ width: 40, height: 40, marginLeft: 8 }}
-                />
-            </View>
-
-            <View
-                style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
                     justifyContent: 'space-between',
                     marginHorizontal: 24,
-                    marginTop: 16,
-                    marginBottom: 8,
-                    paddingVertical: 12,
-                    paddingHorizontal: 14,
-                    borderRadius: 16,
-                    backgroundColor: '#f5fbef',
-                    borderWidth: 1,
-                    borderColor: '#d5e7bf',
                 }}
             >
-                <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text
+                        style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
+                    >
+                        {t('home.title')}
+                    </Text>
+                    <Image
+                        source={require('../assets/alarm_smile.png')}
+                        style={{ width: 40, height: 40, marginLeft: 8 }}
+                    />
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text
                         style={{
-                            fontSize: 16,
+                            marginRight: 8,
+                            fontSize: 15,
                             color: '#36561d',
                             fontFamily: 'Jua-Regular',
                         }}
                     >
                         {t('home.alarmToggleLabel')}
                     </Text>
-                    <Text
-                        style={{
-                            marginTop: 4,
-                            fontSize: 12,
-                            color: '#6d8f3c',
-                            fontFamily: 'Jua-Regular',
-                        }}
-                    >
-                        10초 테스트 알림 가능
-                    </Text>
+                    <Switch
+                        value={notificationsEnabled}
+                        onValueChange={handleToggleNotifications}
+                        trackColor={{ false: '#c7d7b2', true: '#8fd08f' }}
+                        thumbColor="#ffffff"
+                        ios_backgroundColor="#c7d7b2"
+                    />
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity
-                        onPress={handleTestNotification}
-                        style={{
-                            marginRight: 10,
-                            paddingHorizontal: 12,
-                            paddingVertical: 10,
-                            borderRadius: 12,
-                            backgroundColor: '#e4f3d2',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: '#45671d',
-                                fontSize: 13,
-                                fontFamily: 'Jua-Regular',
-                            }}
-                        >
-                            10초 테스트
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={handleToggleNotifications}
-                        style={{
-                            width: 66,
-                            padding: 4,
-                            borderRadius: 999,
-                            backgroundColor: notificationsEnabled ? '#4caf50' : '#c7d7b2',
-                        }}
-                    >
-                        <View
-                            style={{
-                                width: 28,
-                                height: 28,
-                                borderRadius: 14,
-                                backgroundColor: '#fff',
-                                alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
-                            }}
-                        />
-                    </TouchableOpacity>
-                </View>
+            </View>
+
+            <View
+                style={{
+                    marginHorizontal: 24,
+                    marginTop: 10,
+                    marginBottom: 2,
+                }}
+            >
+                <Text
+                    style={{
+                        fontSize: 12,
+                        color: '#6d8f3c',
+                        fontFamily: 'Jua-Regular',
+                    }}
+                >
+                    갱신 버튼을 길게 누르면 10초 뒤 테스트 알림이 와요.
+                </Text>
             </View>
 
             <AlarmList
                 alarms={alarms}
                 deleteAlarm={deleteAlarm}
                 updateAlarmDate={updateAlarmDate}
+                testAlarmNotification={handleTestNotification}
                 onEdit={(alarm, ref, swipeRef) => {
                     editButtonRef.current = ref
                     editingSwipeRef.current = swipeRef
