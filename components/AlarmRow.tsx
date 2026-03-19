@@ -353,8 +353,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: -16,
         top: '50%',
-        width: 32,
-        height: 32,
+        width: 42,
+        height: 42,
         resizeMode: 'contain',
     },
     footer: {

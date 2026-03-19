@@ -208,7 +208,7 @@ export default function HomeScreen() {
                     </Text>
                     <Image
                         source={require('../assets/splash-icon.png')}
-                        style={{ width: 40, height: 40, marginLeft: 8 }}
+                        style={{ width: 40, height: 40, marginLeft: 4 }}
                     />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
