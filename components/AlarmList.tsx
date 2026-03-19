@@ -13,6 +13,7 @@ type Props = {
         triggerRef: any,
         swipeableRef: Swipeable | null
     ) => void
+    header?: React.ReactElement | null
     footer?: React.ReactElement | null
     currentTime: number
 }
@@ -22,6 +23,7 @@ const AlarmList = ({
     deleteAlarm,
     updateAlarmDate,
     onEdit,
+    header,
     footer,
     currentTime,
 }: Props) => {
@@ -58,6 +60,7 @@ const AlarmList = ({
             )}
             contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={header}
             ListFooterComponent={footer}
         />
     )
@@ -72,4 +75,3 @@ const styles = StyleSheet.create({
 })
 
 export default AlarmList
-

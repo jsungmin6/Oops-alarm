@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "옵스 알람"
+  },
+  "android": {
+    "app_name": "옵스 알람"
+  }
+}

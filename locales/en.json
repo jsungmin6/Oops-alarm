@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Oops Alarm"
+  },
+  "android": {
+    "app_name": "Oops Alarm"
+  }
+}

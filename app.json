@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -21,14 +20,25 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.jsungmin506.oopsalarm"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "iosAppId": "ca-app-pub-2229465145229904~3753268783",
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "067743b6-a51f-40c3-9867-22ff1cccd99e"
+      }
+    }
   }
 }

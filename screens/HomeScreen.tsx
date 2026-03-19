@@ -1,4 +1,5 @@
 import {
+    Alert,
     Text,
     TouchableOpacity,
     View,
@@ -15,8 +16,18 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import AddAlarmModal from '../components/AddAlarmModal'
 import EditAlarmModal from '../components/EditAlarmModal'
 import { Swipeable } from 'react-native-gesture-handler'
+import BannerAdSection from '../components/BannerAdSection'
+import { useLocalization } from '../i18n'
+import { loadAlarmsFromStorage, saveAlarmsToStorage } from '../services/alarmStorage'
+import {
+    getAlarmNotificationsEnabledAsync,
+    scheduleAlarmTestNotificationAsync,
+    setAlarmNotificationsEnabledAsync,
+    syncAlarmNotificationsAsync,
+} from '../services/notifications'
 
 export default function HomeScreen() {
+    const { t } = useLocalization()
     const [alarms, setAlarms] = useState<Alarm[]>([])
     const [showAdd, setShowAdd] = useState(false)
     const addButtonRef = useRef<any>(null)
@@ -24,11 +35,15 @@ export default function HomeScreen() {
     const editButtonRef = useRef<any>(null)
     const editingSwipeRef = useRef<Swipeable | null>(null)
     const [currentTime, setCurrentTime] = useState(Date.now())
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true)
 
     const loadAlarms = useCallback(async () => {
-        const json = await AsyncStorage.getItem('alarms')
-        const saved: Alarm[] = json ? JSON.parse(json) : []
+        const [saved, storedNotificationsEnabled] = await Promise.all([
+            loadAlarmsFromStorage(),
+            getAlarmNotificationsEnabledAsync(),
+        ])
         setAlarms(saved)
+        setNotificationsEnabled(storedNotificationsEnabled)
         setCurrentTime(Date.now())
     }, [])
 
@@ -53,27 +68,31 @@ export default function HomeScreen() {
     }, [loadAlarms])
 
     const updateAlarmDate = async (id: string) => {
-        const json = await AsyncStorage.getItem('alarms')
-        const alarms: Alarm[] = json ? JSON.parse(json) : []
+        const storedAlarms = await loadAlarmsFromStorage()
 
-        const updated = alarms.map((alarm) =>
+        const updated = storedAlarms.map((alarm) =>
             alarm.id === id
                 ? { ...alarm, createdAt: new Date().toISOString() }
                 : alarm
         )
 
-        await AsyncStorage.setItem('alarms', JSON.stringify(updated))
+        await saveAlarmsToStorage(updated)
+        await syncAlarmNotificationsAsync(updated, {
+            enabled: notificationsEnabled,
+        })
         setAlarms(updated)
         setCurrentTime(Date.now())
     }
 
     const deleteAlarm = async (id: string) => {
-        const json = await AsyncStorage.getItem('alarms')
-        const alarms: Alarm[] = json ? JSON.parse(json) : []
+        const storedAlarms = await loadAlarmsFromStorage()
 
-        const filtered = alarms.filter((alarm) => alarm.id !== id)
+        const filtered = storedAlarms.filter((alarm) => alarm.id !== id)
 
-        await AsyncStorage.setItem('alarms', JSON.stringify(filtered))
+        await saveAlarmsToStorage(filtered)
+        await syncAlarmNotificationsAsync(filtered, {
+            enabled: notificationsEnabled,
+        })
         setAlarms(filtered)
         setCurrentTime(Date.now())
     }
@@ -88,10 +107,13 @@ export default function HomeScreen() {
             interval,
             createdAt: new Date().toISOString(),
         }
-        const json = await AsyncStorage.getItem('alarms')
-        const current: Alarm[] = json ? JSON.parse(json) : []
+        const current = await loadAlarmsFromStorage()
         current.push(newAlarm)
-        await AsyncStorage.setItem('alarms', JSON.stringify(current))
+        await saveAlarmsToStorage(current)
+        await syncAlarmNotificationsAsync(current, {
+            enabled: notificationsEnabled,
+            requestPermissions: notificationsEnabled,
+        })
         setAlarms(current)
         setCurrentTime(Date.now())
     }
@@ -102,9 +124,8 @@ export default function HomeScreen() {
         interval: number,
         startDate: Date
     ) => {
-        const json = await AsyncStorage.getItem('alarms')
-        const alarms: Alarm[] = json ? JSON.parse(json) : []
-        const updated = alarms.map((alarm) =>
+        const storedAlarms = await loadAlarmsFromStorage()
+        const updated = storedAlarms.map((alarm) =>
             alarm.id === id
                 ? {
                       ...alarm,
@@ -114,13 +135,65 @@ export default function HomeScreen() {
                   }
                 : alarm
         )
-        await AsyncStorage.setItem('alarms', JSON.stringify(updated))
+        await saveAlarmsToStorage(updated)
+        await syncAlarmNotificationsAsync(updated, {
+            enabled: notificationsEnabled,
+        })
         setAlarms(updated)
         editingSwipeRef.current?.close()
         editingSwipeRef.current = null
         setCurrentTime(Date.now())
     }
 
+    const handleToggleNotifications = async () => {
+        const nextValue = !notificationsEnabled
+
+        if (nextValue) {
+            await setAlarmNotificationsEnabledAsync(true)
+            const scheduled = await scheduleAlarmTestNotificationAsync(
+                alarms[0]?.name || 'Oops Alarm',
+                true
+            )
+
+            if (!scheduled) {
+                await setAlarmNotificationsEnabledAsync(false)
+                setNotificationsEnabled(false)
+                Alert.alert(
+                    t('common.confirm'),
+                    t('notifications.permissionsDenied')
+                )
+                return
+            }
+        } else {
+            await setAlarmNotificationsEnabledAsync(false)
+        }
+
+        await syncAlarmNotificationsAsync(alarms, {
+            enabled: nextValue,
+            requestPermissions: nextValue,
+        })
+        setNotificationsEnabled(nextValue)
+    }
+
+    const handleTestNotification = async () => {
+        const alarmName = alarms[0]?.name || 'Oops Alarm'
+
+        if (!notificationsEnabled) {
+            Alert.alert(t('common.confirm'), t('notifications.alarmsOff'))
+            return
+        }
+
+        const scheduled = await scheduleAlarmTestNotificationAsync(alarmName, true)
+        if (!scheduled) {
+            Alert.alert(t('common.confirm'), t('notifications.permissionsDenied'))
+            return
+        }
+
+        Alert.alert(
+            t('notifications.testScheduledTitle'),
+            t('notifications.testScheduledBody', { name: alarmName })
+        )
+    }
 
     return (
         <SafeAreaView
@@ -136,12 +209,92 @@ export default function HomeScreen() {
                 <Text
                     style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
                 >
-                    내 알람
+                    {t('home.title')}
                 </Text>
                 <Image
                     source={require('../assets/alarm_smile.png')}
                     style={{ width: 40, height: 40, marginLeft: 8 }}
                 />
+            </View>
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginHorizontal: 24,
+                    marginTop: 16,
+                    marginBottom: 8,
+                    paddingVertical: 12,
+                    paddingHorizontal: 14,
+                    borderRadius: 16,
+                    backgroundColor: '#f5fbef',
+                    borderWidth: 1,
+                    borderColor: '#d5e7bf',
+                }}
+            >
+                <View>
+                    <Text
+                        style={{
+                            fontSize: 16,
+                            color: '#36561d',
+                            fontFamily: 'Jua-Regular',
+                        }}
+                    >
+                        {t('home.alarmToggleLabel')}
+                    </Text>
+                    <Text
+                        style={{
+                            marginTop: 4,
+                            fontSize: 12,
+                            color: '#6d8f3c',
+                            fontFamily: 'Jua-Regular',
+                        }}
+                    >
+                        10초 테스트 알림 가능
+                    </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity
+                        onPress={handleTestNotification}
+                        style={{
+                            marginRight: 10,
+                            paddingHorizontal: 12,
+                            paddingVertical: 10,
+                            borderRadius: 12,
+                            backgroundColor: '#e4f3d2',
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#45671d',
+                                fontSize: 13,
+                                fontFamily: 'Jua-Regular',
+                            }}
+                        >
+                            10초 테스트
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={handleToggleNotifications}
+                        style={{
+                            width: 66,
+                            padding: 4,
+                            borderRadius: 999,
+                            backgroundColor: notificationsEnabled ? '#4caf50' : '#c7d7b2',
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 28,
+                                height: 28,
+                                borderRadius: 14,
+                                backgroundColor: '#fff',
+                                alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
+                            }}
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <AlarmList
@@ -154,6 +307,7 @@ export default function HomeScreen() {
                     setEditingAlarm(alarm)
                 }}
                 currentTime={currentTime}
+                header={<BannerAdSection />}
                 footer={
                     <TouchableOpacity
                         ref={addButtonRef}
