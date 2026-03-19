@@ -246,7 +246,7 @@ const AlarmRow = ({
                                     styles.progressIcon,
                                     {
                                         transform: [
-                                            { translateY: -16 },
+                                            { translateY: -21 },
                                             {
                                                 rotate: spinAnim.interpolate({
                                                     inputRange: [0, 1],
