@@ -241,7 +241,7 @@ const AlarmRow = ({
                         </View>
                         {isDue && (
                             <Animated.Image
-                                source={require('../assets/alarm.png')}
+                                source={require('../assets/splash-icon.png')}
                                 style={[
                                     styles.progressIcon,
                                     {

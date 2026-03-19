@@ -207,7 +207,7 @@ export default function HomeScreen() {
                         {t('home.title')}
                     </Text>
                     <Image
-                        source={require('../assets/alarm_smile.png')}
+                        source={require('../assets/splash-icon.png')}
                         style={{ width: 40, height: 40, marginLeft: 8 }}
                     />
                 </View>
