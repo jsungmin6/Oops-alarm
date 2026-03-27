@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import {
     BannerAd,
@@ -6,24 +7,34 @@ import {
 import { adConfig } from '../services/ads'
 
 export default function BannerAdSection() {
+    const [loaded, setLoaded] = useState(false)
+
     return (
-        <View style={styles.card}>
-            <View style={styles.badgeRow}>
-                <Text style={styles.badge}>AD</Text>
-                <Text style={styles.helper}>Sponsored</Text>
-            </View>
+        <View style={loaded ? styles.card : styles.preload}>
+            {loaded && (
+                <View style={styles.badgeRow}>
+                    <Text style={styles.badge}>AD</Text>
+                    <Text style={styles.helper}>Sponsored</Text>
+                </View>
+            )}
             <BannerAd
                 unitId={adConfig.bannerAdUnitId}
                 size={BannerAdSize.BANNER}
                 requestOptions={{
                     requestNonPersonalizedAdsOnly: true,
                 }}
+                onAdLoaded={() => setLoaded(true)}
+                onAdFailedToLoad={() => setLoaded(false)}
             />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    preload: {
+        position: 'absolute',
+        opacity: 0,
+    },
     card: {
         marginBottom: 14,
         paddingHorizontal: 12,

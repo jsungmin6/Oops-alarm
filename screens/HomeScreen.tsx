@@ -232,23 +232,25 @@ export default function HomeScreen() {
                 </View>
             </View>
 
-            <View
-                style={{
-                    marginHorizontal: 24,
-                    marginTop: 10,
-                    marginBottom: 2,
-                }}
-            >
-                <Text
+            {__DEV__ && (
+                <View
                     style={{
-                        fontSize: 12,
-                        color: '#6d8f3c',
-                        fontFamily: 'Jua-Regular',
+                        marginHorizontal: 24,
+                        marginTop: 10,
+                        marginBottom: 2,
                     }}
                 >
-                    갱신 버튼을 길게 누르면 10초 뒤 테스트 알림이 와요.
-                </Text>
-            </View>
+                    <Text
+                        style={{
+                            fontSize: 12,
+                            color: '#6d8f3c',
+                            fontFamily: 'Jua-Regular',
+                        }}
+                    >
+                        갱신 버튼을 길게 누르면 10초 뒤 테스트 알림이 와요.
+                    </Text>
+                </View>
+            )}
 
             <AlarmList
                 alarms={alarms}

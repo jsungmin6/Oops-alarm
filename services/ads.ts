@@ -11,8 +11,8 @@ const IOS_APP_OPEN_AD_UNIT_ID = 'ca-app-pub-2229465145229904/9468062648'
 const IOS_BANNER_AD_UNIT_ID = 'ca-app-pub-2229465145229904/2435750430'
 const ANDROID_TEST_APP_ID = 'ca-app-pub-3940256099942544~3347511713'
 
-const USE_TEST_NATIVE_ADS = true
-const USE_TEST_APP_OPEN_ADS = false
+const USE_TEST_NATIVE_ADS = __DEV__
+const USE_TEST_APP_OPEN_ADS = __DEV__
 
 export const adConfig = {
     iosAppId: IOS_APP_ID,
@@ -27,10 +27,10 @@ export const adConfig = {
             : Platform.OS === 'ios'
               ? IOS_APP_OPEN_AD_UNIT_ID
               : TestIds.APP_OPEN,
-    bannerAdUnitId: Platform.select({
-        ios: IOS_BANNER_AD_UNIT_ID,
-        default: TestIds.BANNER,
-    }),
+    bannerAdUnitId:
+        __DEV__ || Platform.OS !== 'ios'
+            ? TestIds.BANNER
+            : IOS_BANNER_AD_UNIT_ID,
     useTestAds: USE_TEST_NATIVE_ADS,
 }
 
@@ -50,7 +50,9 @@ export const showAppOpenAdOnceAsync = async () => {
         return
     }
 
-    const appOpen = AppOpenAd.createForAdRequest(adConfig.appOpenAdUnitId)
+    const appOpen = AppOpenAd.createForAdRequest(adConfig.appOpenAdUnitId, {
+        requestNonPersonalizedAdsOnly: true,
+    })
 
     await new Promise<void>((resolve) => {
         let didFinish = false
