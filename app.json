@@ -18,22 +18,34 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#c8e6c9"
       },
-      "package": "com.jsungmin506.oopsalarm"
+      "package": "com.jsungmin506.oopsalarm",
+      "notification": {
+        "icon": "./assets/notification-icon.png",
+        "color": "#4caf50"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Jua-Regular.ttf"
+          ]
+        }
+      ],
       [
         "react-native-google-mobile-ads",
         {
           "iosAppId": "ca-app-pub-2229465145229904~3753268783",
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
+          "androidAppId": "ca-app-pub-2229465145229904~6093970012"
         }
-      ]
+      ],
+      "expo-tracking-transparency"
     ],
     "extra": {
       "eas": {

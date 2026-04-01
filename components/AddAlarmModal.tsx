@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontWeight: 'bold',
         fontFamily: 'Jua-Regular',
     },
 })

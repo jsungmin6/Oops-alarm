@@ -290,7 +290,6 @@ const styles = StyleSheet.create({
     title: {
         flex: 1,
         fontSize: 20,
-        fontWeight: 'bold',
         fontFamily: 'Jua-Regular',
         marginRight: 8,
         flexShrink: 1,
@@ -317,7 +316,6 @@ const styles = StyleSheet.create({
     refreshButtonText: {
         color: '#fff',
         fontSize: 14,
-        fontWeight: '500',
         fontFamily: 'Jua-Regular',
     },
     progressContainer: {
@@ -386,7 +384,6 @@ const styles = StyleSheet.create({
     },
     actionLabel: {
         color: '#ffffff',
-        fontWeight: '600',
         fontSize: 16,
         fontFamily: 'Jua-Regular',
     },

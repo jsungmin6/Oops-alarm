@@ -202,7 +202,7 @@ export default function HomeScreen() {
             >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text
-                        style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'Jua-Regular' }}
+                        style={{ fontSize: 24, fontFamily: 'Jua-Regular' }}
                     >
                         {t('home.title')}
                     </Text>
@@ -289,7 +289,6 @@ export default function HomeScreen() {
                             style={{
                                 fontSize: 32,
                                 color: 'white',
-                                fontWeight: 'bold',
                                 fontFamily: 'Jua-Regular',
                             }}
                         >
