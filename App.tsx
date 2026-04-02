@@ -7,7 +7,7 @@ import { useFonts } from 'expo-font'
 import { RootStackParamList } from './types/navigation'
 import HomeScreen from './screens/HomeScreen'
 import { LocalizationProvider } from './i18n'
-import { initializeMobileAds, showAppOpenAdOnceAsync } from './services/ads'
+import { initializeMobileAds } from './services/ads'
 import { initializeNotifications } from './services/notifications'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -27,7 +27,7 @@ export default function App() {
   useEffect(() => {
     if (!fontsLoaded) return
     const task = InteractionManager.runAfterInteractions(() => {
-      void initializeMobileAds().then(() => showAppOpenAdOnceAsync())
+      void initializeMobileAds()
     })
     return () => task.cancel()
   }, [fontsLoaded])
