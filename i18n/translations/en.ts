@@ -33,6 +33,7 @@ const en = {
     channelName: 'Due today reminders',
     dueTodayTitle: 'You have something to do today',
     dueTodayBody: 'It is time to check %{name}',
+    multipleDueBody: 'You have %{count} things to do',
     permissionsDenied: 'Device notification permission is off, so alarm reminders cannot be delivered.',
     alarmsOff: 'The alarm toggle is off, so test reminders are also blocked.',
     testTitle: 'Test reminder',

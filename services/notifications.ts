@@ -3,7 +3,9 @@ import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
 import { translate } from '../i18n'
 import { Alarm } from '../types/Alarm'
-import { getNextReminderDate } from './alarmSchedule'
+import { getNotificationSlots } from './alarmSchedule'
+
+const REMINDER_HOURS = [8, 18]
 
 const ALARM_NOTIFICATION_IDS_STORAGE_KEY = 'alarmNotificationIds'
 const ALARM_NOTIFICATIONS_ENABLED_STORAGE_KEY = 'alarmNotificationsEnabled'
@@ -162,20 +164,11 @@ export const syncAlarmNotificationsAsync = async (
   alarms: Alarm[],
   options: SyncNotificationOptions = {}
 ) => {
-  const currentMap = await loadNotificationMap()
-  const nextMap: Record<string, string> = {}
   const notificationsEnabled =
     options.enabled ?? (await getAlarmNotificationsEnabledAsync())
 
-  if (!notificationsEnabled) {
+  if (!notificationsEnabled || alarms.length === 0) {
     await cancelAllScheduledNotificationsAsync()
-    await saveNotificationMap(nextMap)
-    return
-  }
-
-  if (alarms.length === 0) {
-    await cancelAllScheduledNotificationsAsync()
-    await saveNotificationMap(nextMap)
     return
   }
 
@@ -186,29 +179,39 @@ export const syncAlarmNotificationsAsync = async (
     return
   }
 
-  for (const alarm of alarms) {
-    await cancelNotificationIfNeeded(currentMap[alarm.id])
+  await cancelAllScheduledNotificationsAsync()
 
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: translate('notifications.dueTodayTitle'),
-        body: translate('notifications.dueTodayBody', { name: alarm.name }),
-        sound: 'default',
-        data: { alarmId: alarm.id },
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DATE,
-        date: getNextReminderDate(alarm),
-        channelId: DUE_TODAY_CHANNEL_ID,
-      },
-    })
+  const now = new Date()
+  const followUpDays = 1
+  const slots = getNotificationSlots(alarms, followUpDays, now)
+  const sortedDates = Object.keys(slots).sort()
 
-    nextMap[alarm.id] = notificationId
+  for (const dateKey of sortedDates) {
+    const alarmsForDate = slots[dateKey]
+    const [year, month, day] = dateKey.split('-').map(Number)
+
+    for (const hour of REMINDER_HOURS) {
+      const triggerDate = new Date(year, month - 1, day, hour, 0, 0)
+      if (triggerDate.getTime() <= now.getTime()) continue
+
+      const body =
+        alarmsForDate.length === 1
+          ? translate('notifications.dueTodayBody', { name: alarmsForDate[0].name })
+          : translate('notifications.multipleDueBody', { count: alarmsForDate.length })
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: translate('notifications.dueTodayTitle'),
+          body,
+          sound: 'default',
+          data: { alarmIds: alarmsForDate.map((a) => a.id) },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: triggerDate,
+          channelId: DUE_TODAY_CHANNEL_ID,
+        },
+      })
+    }
   }
-
-  const removedAlarmIds = Object.keys(currentMap).filter((alarmId) => !(alarmId in nextMap))
-  await Promise.all(
-    removedAlarmIds.map((alarmId) => cancelNotificationIfNeeded(currentMap[alarmId]))
-  )
-  await saveNotificationMap(nextMap)
 }

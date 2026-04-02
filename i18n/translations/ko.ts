@@ -33,6 +33,7 @@ const ko = {
     channelName: '오늘 할 일 알림',
     dueTodayTitle: '오늘 해야 할 일이 있어요',
     dueTodayBody: '%{name} 확인할 시간이에요',
+    multipleDueBody: '%{count}개의 할일이 있습니다',
     permissionsDenied: '기기 알림 권한이 꺼져 있어 알람 알림을 보낼 수 없어요.',
     alarmsOff: '알람 토글이 꺼져 있어 테스트 알림도 보내지 않아요.',
     testTitle: '테스트 알림',

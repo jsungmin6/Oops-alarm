@@ -9,6 +9,7 @@ import {
 import { Swipeable } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress'
 import { Alarm } from '../types/Alarm'
+import { getAlarmStatus } from '../services/alarmSchedule'
 
 type Props = {
     alarm: Alarm
@@ -23,21 +24,6 @@ type Props = {
     currentTime: number
 }
 
-const calculateProgress = (
-    createdAt: string,
-    interval: number,
-    currentTime: number
-) => {
-    const start = new Date(createdAt)
-    const now = new Date(currentTime)
-    const diffDays = Math.floor(
-        (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    )
-    return {
-        progress: Math.min(Math.max(diffDays, 0) / interval, 1),
-        remainingDays: Math.max(interval - diffDays, 0),
-    }
-}
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -56,11 +42,7 @@ const AlarmRow = ({
     onEdit,
     currentTime,
 }: Props) => {
-    const { progress, remainingDays } = calculateProgress(
-        alarm.createdAt,
-        alarm.interval,
-        currentTime
-    )
+    const { progress, remainingDays } = getAlarmStatus(alarm, new Date(currentTime))
     const editRef = useRef<any>(null)
     const swipeableRef = useRef<Swipeable | null>(null)
 

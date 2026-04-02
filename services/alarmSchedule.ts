@@ -8,7 +8,7 @@ export const startOfDay = (value: Date | string | number) => {
   return date
 }
 
-export const setReminderTime = (value: Date, hour = 9) => {
+export const setReminderTime = (value: Date, hour = 6) => {
   const date = new Date(value)
   date.setHours(hour, 0, 0, 0)
   return date
@@ -33,19 +33,43 @@ export const getAlarmStatus = (alarm: Alarm, now = new Date()) => {
   }
 }
 
-export const getNextReminderDate = (alarm: Alarm, now = new Date()) => {
+export const getNextDueDay = (alarm: Alarm, now = new Date()): Date => {
   const createdAt = startOfDay(alarm.createdAt)
   const { elapsedDays, interval } = getAlarmStatus(alarm, now)
   const cycles = Math.ceil(elapsedDays / interval)
   const nextDueDate = new Date(createdAt)
   nextDueDate.setDate(nextDueDate.getDate() + cycles * interval)
 
-  const reminderDate = setReminderTime(nextDueDate)
-  if (reminderDate.getTime() > now.getTime()) {
-    return reminderDate
+  if (startOfDay(nextDueDate).getTime() >= startOfDay(now).getTime()) {
+    return startOfDay(nextDueDate)
   }
 
   const nextCycleDate = new Date(nextDueDate)
   nextCycleDate.setDate(nextCycleDate.getDate() + interval)
-  return setReminderTime(nextCycleDate)
+  return startOfDay(nextCycleDate)
+}
+
+export const getNotificationSlots = (
+  alarms: Alarm[],
+  followUpDays: number,
+  now = new Date()
+): Record<string, Alarm[]> => {
+  const slots: Record<string, Alarm[]> = {}
+
+  for (const alarm of alarms) {
+    const dueDay = getNextDueDay(alarm, now)
+
+    for (let i = 0; i <= followUpDays; i++) {
+      const day = new Date(dueDay)
+      day.setDate(day.getDate() + i)
+      const key = day.toISOString().slice(0, 10)
+
+      if (!slots[key]) slots[key] = []
+      if (!slots[key].some((a) => a.id === alarm.id)) {
+        slots[key].push(alarm)
+      }
+    }
+  }
+
+  return slots
 }
