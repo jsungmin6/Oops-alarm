@@ -11,7 +11,7 @@ index 586f261..1fbe869 100644
  
    func wraps<InnerType>(_ type: InnerType.Type) -> Bool {
 diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-index 6d65323..092a3ea 100644
+index 6d65323..d360798 100644
 --- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
 +++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
 @@ -193,7 +193,7 @@ extension ExpoSwiftUI {
@@ -19,7 +19,7 @@ index 6d65323..092a3ea 100644
  // MARK: - ViewWrapper
  
 -extension ExpoSwiftUI.SwiftUIVirtualView: @MainActor ExpoSwiftUI.ViewWrapper {
-+extension ExpoSwiftUI.SwiftUIVirtualView: ExpoSwiftUI.ViewWrapper {
++extension ExpoSwiftUI.SwiftUIVirtualView: @preconcurrency ExpoSwiftUI.ViewWrapper {
    func getWrappedView() -> Any {
      if let wrapper = contentView as? ExpoSwiftUI.ViewWrapper {
        return wrapper.getWrappedView()
