@@ -12,6 +12,7 @@ module.exports = (config) =>
       const patch = `
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |cfg|
+        cfg.build_settings['SWIFT_VERSION'] = '5.0'
         cfg.build_settings['SWIFT_STRICT_CONCURRENCY'] = 'minimal'
         cfg.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -strict-concurrency=minimal'
       end
