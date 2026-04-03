@@ -1,16 +1,15 @@
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-index 6d65323..4126435 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-@@ -194,7 +194,7 @@ extension ExpoSwiftUI {
- // MARK: - ViewWrapper
+diff --git a/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift b/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
+index 586f261..1fbe869 100644
+--- a/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
++++ b/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
+@@ -1,6 +1,6 @@
+ // Copyright 2025-present 650 Industries. All rights reserved.
  
- extension ExpoSwiftUI.SwiftUIVirtualView: @MainActor ExpoSwiftUI.ViewWrapper {
--  func getWrappedView() -> Any {
-+  func getWrappedView() -> any Sendable {
-     if let wrapper = contentView as? ExpoSwiftUI.ViewWrapper {
-       return wrapper.getWrappedView()
-     }
+-internal struct DynamicSwiftUIViewType<ViewType: ExpoSwiftUIView>: AnyDynamicType {
++internal struct DynamicSwiftUIViewType<ViewType: ExpoSwiftUIView>: @unchecked Sendable, AnyDynamicType {
+   let innerType: ViewType.Type
+ 
+   func wraps<InnerType>(_ type: InnerType.Type) -> Bool {
 diff --git a/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift b/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift
 index 8c3efcb..3ea385e 100644
 --- a/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift
