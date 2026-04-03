@@ -45,7 +45,8 @@
           "androidAppId": "ca-app-pub-2229465145229904~6093970012"
         }
       ],
-      "expo-tracking-transparency"
+      "expo-tracking-transparency",
+      "./plugins/withSwiftConcurrency"
     ],
     "extra": {
       "eas": {
