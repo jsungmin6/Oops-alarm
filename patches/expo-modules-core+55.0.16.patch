@@ -1,195 +1,26 @@
-diff --git a/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift b/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
-index 586f261..6b75a69 100644
---- a/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
-+++ b/node_modules/expo-modules-core/ios/Core/DynamicTypes/DynamicSwiftUIViewType.swift
-@@ -42,7 +42,7 @@ internal struct DynamicSwiftUIViewType<ViewType: ExpoSwiftUIView>: AnyDynamicTyp
-     // For wrapper types
-     // e.g. ExpoUIView(SecureFieldView.self)
-     if let provider = appContext.findView(withTag: viewTag, ofType: ExpoSwiftUI.ViewWrapper.self),
--       let innerView = provider.getWrappedView() as? ViewType {
-+       let innerView = MainActor.assumeIsolated({ provider.getWrappedView() }) as? ViewType {
-       return innerView
-     }
-     // For views using WithHostingView protocol.
-@@ -50,7 +50,9 @@ internal struct DynamicSwiftUIViewType<ViewType: ExpoSwiftUIView>: AnyDynamicTyp
-     guard let view = appContext.findView(withTag: viewTag, ofType: AnyExpoSwiftUIHostingView.self) else {
-       throw Exceptions.SwiftUIViewNotFound((tag: viewTag, type: innerType.self))
-     }
--    return view.getContentView()
-+    return MainActor.assumeIsolated {
-+      view.getContentView()
-+    }
-   }
- 
-   var description: String {
-diff --git a/node_modules/expo-modules-core/ios/Core/Logging/PersistentFileLog.swift b/node_modules/expo-modules-core/ios/Core/Logging/PersistentFileLog.swift
-index 8938578..daa648e 100644
---- a/node_modules/expo-modules-core/ios/Core/Logging/PersistentFileLog.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Logging/PersistentFileLog.swift
-@@ -2,8 +2,8 @@
- 
- import Foundation
- 
--public typealias PersistentFileLogFilter = (String) -> Bool
--public typealias PersistentFileLogCompletionHandler = (Error?) -> Void
-+public typealias PersistentFileLogFilter = @Sendable (String) -> Bool
-+public typealias PersistentFileLogCompletionHandler = @Sendable (Error?) -> Void
- 
- /**
-  * A thread-safe class for reading and writing line-separated strings to a flat file.
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/ComponentData.swift b/node_modules/expo-modules-core/ios/Core/Views/ComponentData.swift
-index d632a6e..eb6e81a 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/ComponentData.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/ComponentData.swift
-@@ -59,7 +59,9 @@ public final class ComponentData: RCTComponentDataSwiftAdapter {
- 
-     // Props are set differently in SwiftUI hosting views – delegate the work to `ExpoSwiftUI.HostingView`.
-     if let hostingView = view as? ExpoSwiftUI.AnyHostingView {
--      hostingView.updateProps(props)
-+      MainActor.assumeIsolated {
-+        hostingView.updateProps(props)
-+      }
- 
-       // Pass props to React too, to apply layout and styles for the hosting view.
-       super.setProps(props, forView: view)
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/ExpoSwiftUI.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/ExpoSwiftUI.swift
-index b376a98..26c695d 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/ExpoSwiftUI.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/ExpoSwiftUI.swift
-@@ -23,6 +23,7 @@ extension ExpoSwiftUI {
-    Protocol for wrapper views (e.g., UIBaseView) that wrap an inner view.
-    Used by DynamicSwiftUIViewType to resolve the underlying view through wrapper layers.
-    */
-+  @MainActor
-   public protocol ViewWrapper {
-     func getWrappedView() -> Any
-   }
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
-index b1c9f8b..cf11dee 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIHostingView.swift
-@@ -5,6 +5,7 @@ import SwiftUI
- /**
-  A type-erased protocol that hosting views must conform to.
-  */
-+@MainActor
- internal protocol AnyExpoSwiftUIHostingView {
-   func updateProps(_ rawProps: [String: Any])
-   func getContentView() -> any ExpoSwiftUI.View
-@@ -42,7 +43,8 @@ extension ExpoSwiftUI {
-   /**
-    A hosting view that renders a SwiftUI view inside the UIKit view hierarchy.
-    */
--  public final class HostingView<Props: ViewProps, ContentView: View<Props>>: ExpoView, @MainActor AnyExpoSwiftUIHostingView {
-+  @MainActor
-+  public final class HostingView<Props: ViewProps, ContentView: View<Props>>: ExpoView, AnyExpoSwiftUIHostingView {
-     /**
-      Props object that stores all the props for this particular view.
-      It's an environment object that is observed by the content view.
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
-index fa947e5..851f2fd 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
-@@ -47,7 +47,9 @@ public extension ExpoSwiftUIView {
-         Group {
-           if let hostingView = child as? ExpoSwiftUI.UIViewHost,
-             let hostingUIView = hostingView.view as? (any ExpoSwiftUI.AnyHostingView) {
--            let content = hostingUIView.getContentView()
-+            let content = MainActor.assumeIsolated {
-+              hostingUIView.getContentView()
-+            }
-             transform(
-               AnyView(
-                 content
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewFrameObserver.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewFrameObserver.swift
-index d62091c..2c473da 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewFrameObserver.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIViewFrameObserver.swift
-@@ -13,7 +13,7 @@ extension ExpoSwiftUI {
-       self.view = view
-     }
- 
--    func observe(_ callback: @Sendable @escaping (CGRect) -> Void) {
-+    func observe(_ callback: @escaping (CGRect) -> Void) {
-       // When React Native lays out views, it sets `center` and `bounds` properties to control the `frame`.
-       // You can find this implementation in `updateLayoutMetrics:oldLayoutMetrics:` in `UIView+ComponentViewProtocol.mm`.
-       // We observe changes on `bounds` because:
 diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-index 6d65323..ddae5c4 100644
+index 6d65323..4126435 100644
 --- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
 +++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/SwiftUIVirtualView.swift
-@@ -7,6 +7,7 @@ extension ExpoSwiftUI {
-    An NSObject acting as a fake UIView for RCTMountingManager to represent a SwiftUI view.
-    This class is the Swift component of SwiftUIVirtualView, as referenced in ExpoFabricView.swift.
-    */
-+  @MainActor
-   final class SwiftUIVirtualView<Props: ViewProps, ContentView: View<Props>>: SwiftUIVirtualViewObjC, ExpoSwiftUIView {
-     var uiView: UIView?
-     
-@@ -193,7 +194,8 @@ extension ExpoSwiftUI {
- 
+@@ -194,7 +194,7 @@ extension ExpoSwiftUI {
  // MARK: - ViewWrapper
  
--extension ExpoSwiftUI.SwiftUIVirtualView: @MainActor ExpoSwiftUI.ViewWrapper {
-+@MainActor
-+extension ExpoSwiftUI.SwiftUIVirtualView: ExpoSwiftUI.ViewWrapper {
-   func getWrappedView() -> Any {
+ extension ExpoSwiftUI.SwiftUIVirtualView: @MainActor ExpoSwiftUI.ViewWrapper {
+-  func getWrappedView() -> Any {
++  func getWrappedView() -> any Sendable {
      if let wrapper = contentView as? ExpoSwiftUI.ViewWrapper {
        return wrapper.getWrappedView()
-diff --git a/node_modules/expo-modules-core/ios/Core/Views/ViewDefinition.swift b/node_modules/expo-modules-core/ios/Core/Views/ViewDefinition.swift
-index 5dc73e3..67b7b8e 100644
---- a/node_modules/expo-modules-core/ios/Core/Views/ViewDefinition.swift
-+++ b/node_modules/expo-modules-core/ios/Core/Views/ViewDefinition.swift
-@@ -118,7 +118,8 @@ extension ConcurrentFunctionDefinition: ViewDefinitionFunctionElement {
-   public typealias ViewType = FirstArgType
- }
- 
--extension UIView: @MainActor AnyArgument {
-+@MainActor
-+extension UIView: AnyArgument {
-   public static func getDynamicType() -> AnyDynamicType {
-     return DynamicViewType(innerType: Self.self)
-   }
+     }
 diff --git a/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift b/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift
-index 8c3efcb..00134ee 100644
+index 8c3efcb..3ea385e 100644
 --- a/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift
 +++ b/node_modules/expo-modules-core/ios/DevTools/URLAuthenticationChallengeForwardSender.swift
-@@ -3,10 +3,10 @@
+@@ -3,7 +3,7 @@
  /**
   A helper class to forward URLAuthenticationChallenge completion handler to URLAuthenticationChallengeSender
   */
 -internal final class URLAuthenticationChallengeForwardSender: NSObject, URLAuthenticationChallengeSender {
--  let completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
 +internal final class URLAuthenticationChallengeForwardSender: NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
-+  let completionHandler: @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+   let completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
  
--  init(completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-+  init(completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-     self.completionHandler = completionHandler
-     super.init()
-   }
-diff --git a/node_modules/expo-modules-core/ios/DevTools/URLSessionSessionDelegateProxy.swift b/node_modules/expo-modules-core/ios/DevTools/URLSessionSessionDelegateProxy.swift
-index dbc5b65..1f2c962 100644
---- a/node_modules/expo-modules-core/ios/DevTools/URLSessionSessionDelegateProxy.swift
-+++ b/node_modules/expo-modules-core/ios/DevTools/URLSessionSessionDelegateProxy.swift
-@@ -3,7 +3,7 @@
- /**
-  Shared URLSessionDelegate instance and delete calls back to ExpoRequestInterceptorProtocol instances.
-  */
--public final class URLSessionSessionDelegateProxy: NSObject, URLSessionDataDelegate {
-+public final class URLSessionSessionDelegateProxy: NSObject, URLSessionDataDelegate, @unchecked Sendable {
-   private let dispatchQueue: DispatchQueue
-   private var delegateMap: [AnyHashable: URLSessionDataDelegate] = [:]
- 
-diff --git a/node_modules/expo-modules-core/ios/ReactDelegates/ExpoReactDelegate.swift b/node_modules/expo-modules-core/ios/ReactDelegates/ExpoReactDelegate.swift
-index 81871a0..2529cfb 100644
---- a/node_modules/expo-modules-core/ios/ReactDelegates/ExpoReactDelegate.swift
-+++ b/node_modules/expo-modules-core/ios/ReactDelegates/ExpoReactDelegate.swift
-@@ -35,6 +35,7 @@ public class ExpoReactDelegate: NSObject {
-   }
- 
-   @objc
-+  @MainActor
-   public func createRootViewController() -> UIViewController {
-     return self.handlers.lazy
-       .compactMap { $0.createRootViewController() }
+   init(completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
