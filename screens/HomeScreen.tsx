@@ -26,7 +26,7 @@ import {
     syncAlarmNotificationsAsync,
 } from '../services/notifications'
 
-export default function HomeScreen() {
+export default function HomeScreen({ adsReady }: { adsReady?: boolean }) {
     const { t } = useLocalization()
     const [alarms, setAlarms] = useState<Alarm[]>([])
     const [showAdd, setShowAdd] = useState(false)
@@ -263,7 +263,7 @@ export default function HomeScreen() {
                     setEditingAlarm(alarm)
                 }}
                 currentTime={currentTime}
-                header={<BannerAdSection />}
+                header={adsReady ? <BannerAdSection /> : null}
                 footer={
                     <TouchableOpacity
                         ref={addButtonRef}

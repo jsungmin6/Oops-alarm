@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { InteractionManager } from 'react-native'
+import { useEffect, useState } from 'react'
+import { AppState, InteractionManager } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -16,20 +16,54 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'Jua-Regular': require('./assets/fonts/Jua-Regular.ttf'),
   })
+  const [adsReady, setAdsReady] = useState(false)
 
   // initializeNotifications은 UI 없어도 됨
   useEffect(() => {
     initializeNotifications()
   }, [])
 
-  // ATT 다이얼로그는 모든 트랜지션이 끝난 후 요청해야 iOS에서 표시됨
-  // InteractionManager: 하드코딩 딜레이 없이 UI가 완전히 준비된 시점을 보장
+  // ATT 다이얼로그는 앱이 완전히 active 상태일 때만 표시됨
+  // iPadOS 26의 새 윈도우 시스템에서는 InteractionManager + RAF만으로 부족할 수 있음
+  // AppState가 active인지 확인 후 충분한 지연을 두고 요청
   useEffect(() => {
     if (!fontsLoaded) return
-    const task = InteractionManager.runAfterInteractions(() => {
-      void initializeMobileAds()
+    let cancelled = false
+
+    const tryInitAds = () => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
+          if (!cancelled) {
+            void initializeMobileAds().then(() => {
+              if (!cancelled) setAdsReady(true)
+            })
+          }
+        }, 500)
+      })
+      return task
+    }
+
+    // 이미 active 상태면 바로 시도
+    if (AppState.currentState === 'active') {
+      const task = tryInitAds()
+      return () => {
+        cancelled = true
+        task.cancel()
+      }
+    }
+
+    // active가 아니면 active 될 때까지 대기
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active' && !cancelled) {
+        subscription.remove()
+        tryInitAds()
+      }
     })
-    return () => task.cancel()
+
+    return () => {
+      cancelled = true
+      subscription.remove()
+    }
   }, [fontsLoaded])
 
   if (!fontsLoaded) {
@@ -43,9 +77,10 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen
               name="Home"
-              component={HomeScreen}
               options={{ headerShown: false }}
-            />
+            >
+              {(props) => <HomeScreen {...props} adsReady={adsReady} />}
+            </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
       </LocalizationProvider>
