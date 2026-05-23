@@ -20,33 +20,37 @@ const getElapsedWholeDays = (from: Date, to: Date) =>
 export const getAlarmStatus = (alarm: Alarm, now = new Date()) => {
   const interval = Math.max(1, alarm.interval)
   const elapsedDays = getElapsedWholeDays(new Date(alarm.createdAt), now)
-  const daysIntoCurrentCycle = elapsedDays % interval
-  const isDueToday = elapsedDays > 0 && daysIntoCurrentCycle === 0
-  const remainingDays = isDueToday ? 0 : interval - daysIntoCurrentCycle
+
+  if (elapsedDays >= interval) {
+    return {
+      elapsedDays,
+      interval,
+      isDueToday: true,
+      progress: 1,
+      remainingDays: 0,
+    }
+  }
 
   return {
     elapsedDays,
     interval,
-    isDueToday,
-    progress: isDueToday ? 1 : daysIntoCurrentCycle / interval,
-    remainingDays,
+    isDueToday: false,
+    progress: elapsedDays / interval,
+    remainingDays: interval - elapsedDays,
   }
 }
 
 export const getNextDueDay = (alarm: Alarm, now = new Date()): Date => {
   const createdAt = startOfDay(alarm.createdAt)
-  const { elapsedDays, interval } = getAlarmStatus(alarm, now)
-  const cycles = Math.ceil(elapsedDays / interval)
-  const nextDueDate = new Date(createdAt)
-  nextDueDate.setDate(nextDueDate.getDate() + cycles * interval)
+  const { interval, isDueToday } = getAlarmStatus(alarm, now)
 
-  if (startOfDay(nextDueDate).getTime() >= startOfDay(now).getTime()) {
-    return startOfDay(nextDueDate)
+  if (isDueToday) {
+    return startOfDay(now)
   }
 
-  const nextCycleDate = new Date(nextDueDate)
-  nextCycleDate.setDate(nextCycleDate.getDate() + interval)
-  return startOfDay(nextCycleDate)
+  const dueDate = new Date(createdAt)
+  dueDate.setDate(dueDate.getDate() + interval)
+  return startOfDay(dueDate)
 }
 
 export const getNotificationSlots = (

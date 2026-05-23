@@ -61,6 +61,7 @@ export default function DatePickerField({ value, onChange, style }: Props) {
                                 value={temp}
                                 mode="date"
                                 display={display}
+                                maximumDate={new Date()}
                                 onChange={handleChange}
                                 style={styles.picker}
                                 locale="ko-KR"
